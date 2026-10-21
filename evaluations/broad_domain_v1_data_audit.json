@@ -1,0 +1,72 @@
+{
+  "frames": {
+    "train": 1536,
+    "dev": 512,
+    "sealed": 512
+  },
+  "supervised_objects": {
+    "train": 2556,
+    "dev": 839,
+    "sealed": 851
+  },
+  "slot_counts": {
+    "train/unknown_label": 274,
+    "train/back_or_extreme_grazing": 3279,
+    "train/fine_supervised": 2556,
+    "train/partially_in_frame": 29,
+    "train/out_of_frame": 6,
+    "dev/back_or_extreme_grazing": 1119,
+    "dev/fine_supervised": 839,
+    "dev/partially_in_frame": 31,
+    "sealed/unknown_label": 83,
+    "sealed/fine_supervised": 851,
+    "sealed/back_or_extreme_grazing": 1113,
+    "sealed/partially_in_frame": 1,
+    "dev/unknown_label": 57,
+    "dev/outside_range": 2
+  },
+  "physical_range_bin_counts": {
+    "train/0": 255,
+    "dev/0": 96,
+    "sealed/0": 94,
+    "train/1": 319,
+    "dev/1": 79,
+    "sealed/1": 79,
+    "train/2": 328,
+    "dev/2": 104,
+    "dev/3": 160,
+    "sealed/2": 137,
+    "train/3": 307,
+    "sealed/3": 79,
+    "sealed/4": 141,
+    "train/4": 348,
+    "dev/4": 91,
+    "train/5": 412,
+    "train/6": 309,
+    "dev/5": 103,
+    "sealed/5": 109,
+    "dev/6": 84,
+    "sealed/6": 99,
+    "train/7": 278,
+    "dev/7": 122,
+    "sealed/7": 113
+  },
+  "native_size_counts": {
+    "256": 160,
+    "192": 245,
+    "384": 73,
+    "128": 2078
+  },
+  "exact_corner_pnp_control_mm": {
+    "max": 0.15424687800976647,
+    "median": 0.008705003082007395,
+    "p95": 0.041071330546401316
+  },
+  "unknown_slots_are_not_negatives": true,
+  "occlusion_truth_available": false,
+  "manifest_sha256": {
+    "train": "ad019b14a31ce3d1b981538050b4a35ee774fa80562e1f7c07caec9eea9be8fa",
+    "dev": "49342fe7130c09da306e38b9997aeb2fbc28d50a0a446ff04d4829c68bec7419",
+    "sealed": "ad6fbd6c0ac9ad465dcb4502b9c206483c51b607c53df00b83aefd22170e9374"
+  }
+}
