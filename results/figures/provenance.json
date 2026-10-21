@@ -1,0 +1,10 @@
+{
+  "source": "dde9b5fb106e53c1d70e88546c9ca616788af6585fffd1d74b006c0d1297482c",
+  "results_sha256": "d096ee7f447bbd1cc493945444748bf1dbabd93489fd86c5de2f72bf72fc9864",
+  "observations_sha256": "e3558394901d6c83167720ea7bbea561cc4c07a2a0bb278e14cb5c5cec11af07",
+  "predictions_sha256": "977b2bf46104824cc2e0da589d6238f0d6bb80b859974f3e77a7fb05f3ccaa3e",
+  "trajectory_selection": "first session by fixed plan order with at least one eligible primary3-5m forecast, physical slot0; graphics-only coverage correction, no selection by error",
+  "scatter_selection": "all primary3-5m records; all outliers retained",
+  "prediction_time_alignment": "300ms points plotted against truth at t+300ms; coordinate axes are fixed world XY",
+  "units": "trajectory m, error mm"
+}

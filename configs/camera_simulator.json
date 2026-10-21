@@ -1,0 +1,8 @@
+{
+  "image_size": [1440, 1080],
+  "K": [[1303.675283386667,0,720],[0,1303.675283386667,540],[0,0,1]],
+  "distortion": [0,0,0,0,0],
+  "measured_marker_width_m": 0.1337707,
+  "measured_marker_height_m": 0.0538873,
+  "scope": "Validated synthetic camera only; physical CS016 camera requires its own calibration"
+}

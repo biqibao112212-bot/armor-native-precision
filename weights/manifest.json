@@ -1,0 +1,59 @@
+{
+  "schema": "armor-native-precision.weights/1",
+  "source_branch": "prediction",
+  "source_commit": "a91f7604a088069823f98f899bf3939987204328",
+  "original_roi_checkpoint_sha256": "f8b382813665ccf3cb75160e6ba246e84c368f32a20b61008e3fe1b90cfc6f5d",
+  "files": {
+    "native_roi_spatial.onnx": {
+      "bytes": 466668,
+      "sha256": "f345c92a9998b02ee7e71c0e4fb92e1a015dae63a26e6dfadbb2b7342f4adf7e"
+    },
+    "native_roi_spatial.pt": {
+      "bytes": 432538,
+      "sha256": "7bf6d93a7dd2647c375462b5d436c181396e2091d919ec1763c207870043ad27"
+    },
+    "native_roi_training_002000.pt": {
+      "bytes": 1057522,
+      "sha256": "f8b382813665ccf3cb75160e6ba246e84c368f32a20b61008e3fe1b90cfc6f5d"
+    },
+    "proposal_yolo3200.pt": {
+      "bytes": 12184770,
+      "sha256": "400344b24aa31bba9560c7526555b9df9658474b1226e9ec1f74cb01541887a3"
+    }
+  },
+  "corner_order": [
+    "bottom_left",
+    "top_left",
+    "top_right",
+    "bottom_right"
+  ],
+  "rgb_resized": false,
+  "new_scientific_training_performed_for_packaging": false,
+  "scope": "synthetic number3, priority3-5m; inference exports of fixed2000-step model",
+  "onnx_parity": {
+    "onnx_checker": true,
+    "batch_max_corner_delta_px": {
+      "1": 0.0,
+      "2": 0.0,
+      "4": 7.62939453125e-06
+    },
+    "provider": "CPUExecutionProvider",
+    "opset": 17,
+    "fixed_input_spatial_shape": [
+      3,
+      128,
+      128
+    ],
+    "dynamic_batch_verified": [
+      1,
+      2,
+      4
+    ],
+    "not_tensorRT_or_NX_validation": true
+  },
+  "licenses": {
+    "native_roi_spatial": "AGPL-3.0",
+    "proposal_yolo3200": "Ultralytics-derived component; AGPL-3.0 text supplied"
+  },
+  "source_project": "aim-stack/prediction internal research prototype"
+}

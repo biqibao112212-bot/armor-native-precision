@@ -1,0 +1,73 @@
+{
+  "original_inference": {
+    "proposal_center_max_delta_px": 0.0,
+    "roi_corner_max_delta_px": 0.0,
+    "objects": 1,
+    "weights_loaded_strictly": true,
+    "original_inference_amp_parity": true
+  },
+  "onnx": {
+    "onnx_checker": true,
+    "batch_max_corner_delta_px": {
+      "1": 0.0,
+      "2": 0.0,
+      "4": 7.62939453125e-06
+    },
+    "provider": "CPUExecutionProvider",
+    "opset": 17,
+    "fixed_input_spatial_shape": [
+      3,
+      128,
+      128
+    ],
+    "dynamic_batch_verified": [
+      1,
+      2,
+      4
+    ],
+    "not_tensorRT_or_NX_validation": true
+  },
+  "training_smoke": {
+    "complete": true,
+    "updates": 8,
+    "optimizer_updates": 7,
+    "skipped_updates": 1,
+    "seconds": 2.3998266980051994,
+    "parameters": 70012
+  },
+  "resume_smoke": {
+    "complete": true,
+    "updates": 8,
+    "optimizer_updates": 7,
+    "skipped_updates": 1,
+    "seconds": 2.6621462255716324,
+    "parameters": 70012
+  },
+  "resumed_model_max_weight_delta": 2.6337802410125732e-06,
+  "resumed_training_max_loss_delta": 6.914138793945312e-05,
+  "gpu_resume_bitwise_identical": false,
+  "gpu_resume_max_weight_delta_tolerance": 1e-05,
+  "smoke_weights_not_released": true,
+  "published_roi_weights_are_original_frozen_2000_step_model": true,
+  "geometry_unit_tests": {
+    "passed": 4,
+    "scope": [
+      "native pixel copy and padding",
+      "fractional corner decode",
+      "camera translation/PnP invariance",
+      "finite training gradients"
+    ]
+  },
+  "editable_install": {
+    "build_isolation": true,
+    "installed_name": "armor-native-precision",
+    "version": "0.1.0",
+    "console_entrypoints_verified": [
+      "armor-train",
+      "armor-infer",
+      "armor-export",
+      "armor-manifest"
+    ],
+    "end_to_end_cli_inference": true
+  }
+}

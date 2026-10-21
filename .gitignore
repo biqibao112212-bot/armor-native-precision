@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+runs/
+data/
+.DS_Store
+
+# Internal experiment snapshots retained on the development host.
+research/original/
+research/plan.json
+research/full-decision.json
+research/confirmation-selection.json
+results/temporal_comparison_results.json
+results/roi_precision_results.json

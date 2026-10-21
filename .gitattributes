@@ -1,0 +1,2 @@
+# Preserve scientific vector exports verbatim.
+results/figures/*.svg -whitespace

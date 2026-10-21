@@ -1,0 +1,21 @@
+{
+  "head": "spatial",
+  "steps": 2000,
+  "batch_size": 16,
+  "seed": 20261024,
+  "optimizer": "AdamW",
+  "lr": 0.002,
+  "final_lr": 0.0002,
+  "schedule": "cosine",
+  "weight_decay": 0.0001,
+  "clip": 5,
+  "amp_initial_scale": 256,
+  "jitter_px": 8,
+  "distance_m": [
+    3,
+    5
+  ],
+  "input_size": 128,
+  "heatmap_sigma_px": 1.5,
+  "original_effective_updates": 1999
+}

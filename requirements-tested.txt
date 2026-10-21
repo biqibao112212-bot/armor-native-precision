@@ -1,0 +1,8 @@
+# Exact versions in the successful source environment; select CUDA wheels for your host.
+torch==2.5.1
+torchvision==0.20.1
+ultralytics==8.3.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+onnx==1.17.0
+onnxruntime==1.20.2

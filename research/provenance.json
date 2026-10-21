@@ -1,0 +1,16 @@
+{
+  "source_project": "aim-stack/prediction internal prototype",
+  "source_commit": "a91f7604a088069823f98f899bf3939987204328",
+  "model_source_sha256": {
+    "roi_precision.py": "5f3bb35d7733c8106c1fcc27e23b87dc2996a6ddb511239bc87174486f253e09",
+    "roi_geometry.py": "a9f8d38f9d6e163c4f61a4f64d6a3bf7fe2e147f324e9ea7b8fb8e509a5f1536",
+    "train_roi_precision.py": "a0e11dcded2059446794d9b977c40d9a7138d4d20ece7bf159571bc230dd3d8b",
+    "model.py": "9997e15ae9aa54063ecc481f7cf18e8bbebd4a28c25023f7427073db9c38a12e",
+    "train.py": "c0ba730fe4c88c37a95e6ac7082d9bce62b116b2590ea1618d9d5ba95ef24a7d"
+  },
+  "original_roi_checkpoint_sha256": "f8b382813665ccf3cb75160e6ba246e84c368f32a20b61008e3fe1b90cfc6f5d",
+  "portable_entrypoints": "src/armor_native",
+  "source_recipe": "../configs/train_spatial.json",
+  "original_scripts_retained_on_development_host": true,
+  "raw_data_published": false
+}
