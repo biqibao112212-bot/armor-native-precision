@@ -1,6 +1,6 @@
 # 评测口径与完整结果
 
-短版效果见[REPORT.md](REPORT.md)。完整统计：[JSON](results/metrics.json)、[CSV](results/temporal_statistics.csv)。
+完整统计：[JSON](results/metrics.json)、[CSV](results/temporal_statistics.csv)。
 
 新采6段模拟器动态会话、1080原生图像，主区间3–5m实际来自4段。单帧新ROI匹配812/817，深大817/817；单帧位置评分为SDK物理装甲板中心，角点为同曝光精确角点。此前IPPE标记中心的封存结果与本参考有几毫米偏移，不直接合并。
 

@@ -2,7 +2,7 @@
 
 原生像素3号装甲板精定位：全图候选中心 → 128×128原生RGB裁块 → 四角热图与亚像素偏移 → 标定IPPE。精定位网络70,012参数，从头训练；原图只裁剪与补边。特征图的上采样不改变输入RGB像素。
 
-仓库：[https://github.com/biqibao112212-bot/armor-native-precision](https://github.com/biqibao112212-bot/armor-native-precision)。面向汇报的短版见[REPORT.md](REPORT.md)；[方法与参考文献](METHODS.md)、[模型说明](MODEL_CARD.md)、[完整统计](EVALUATION.md)。
+仓库：[https://github.com/biqibao112212-bot/armor-native-precision](https://github.com/biqibao112212-bot/armor-native-precision)。[方法与参考文献](METHODS.md)、[模型说明](MODEL_CARD.md)、[完整统计](EVALUATION.md)。
 
 ## 已训练资源
 
