@@ -8,7 +8,7 @@
 
 新数据 `train.jsonl` 中12688个几何有效板，经冻结 two-lamp-v1 图像证据规则保留6602个监督对象；其余6086个仍保留在原始清单和 `unobservable_objects`，粗检测损失屏蔽对应区域。开发集1182个保留、852个不满足证据。该规则是模拟器外观代理，不能宣称精确的遮挡真值。
 
-距离为相机到板中心径向距离，分段0.3–1、1–2、2–3、3–4、4–5、5–6、6–7、7–8 m。数据不是保证覆盖连续空间中所有姿态；每个分层的实际样本数与测试结果共同报告。真实曝光积分、运动模糊尚无模拟器支持。
+距离为相机到板中心径向距离，分段0.3–1、1–2、2–3、3–4、4–5、5–6、6–7、7–8 m。设计分桶下，实际有效几何标签的训练范围0.359–7.998m、静态封存0.499–7.993m、连续封存0.572–7.605m。最低分桶并不等于已验证到0.3m。数据不是保证覆盖连续空间中所有姿态；每个分层的实际样本数与测试结果共同报告。真实曝光积分、运动模糊尚无模拟器支持。
 
 新清单沿用 `scripts/prepare_broad.py` 的逐曝光格式，在原数据字段外增加 split、range_bin、range_m、native_size、extent_px、screen_corners、coarse_ignored_boxes、light、mode、camera_roll_deg、target_roll_deg、target_pitch_deg、height_difference_m 和 requested_roll_zero_verified。`corners` 始终是装甲板物理顺序左下、左上、右上、右下；不能在斜视时重新按画面左右排序。geometry.json 存 object_points_armor_m。
 

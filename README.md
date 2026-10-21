@@ -1,61 +1,54 @@
 # Armor Native Precision
 
-原生像素3号装甲板精定位：全图候选中心 → 128×128原生RGB裁块 → 四角热图与亚像素偏移 → 标定IPPE。精定位网络70,012参数，从头训练；原图只裁剪与补边。特征图的上采样不改变输入RGB像素。
+3号装甲板原生像素精定位，当前版本 **0.2 / roll=0**。全图YOLO特征粗定位 → 四个原生128角点裁块 → 热图与亚像素偏移 → 物理模板PnP。近距大目标无需缩小RGB；原图1440×1080仅裁剪与补零。
 
-仓库：[https://github.com/biqibao112212-bot/armor-native-precision](https://github.com/biqibao112212-bot/armor-native-precision)。[方法与参考文献](METHODS.md)、[模型说明](MODEL_CARD.md)、[完整统计](EVALUATION.md)。
+[评测与分场景结果](EVALUATION.md) · [模型说明](MODEL_CARD.md) · [训练配方](TRAINING_ROLL0.md) · [方法与参考文献](METHODS.md) · [原报告版用法](docs/REPORT_V1_USAGE.md)
 
-## 已训练资源
+## 本次范围
+
+相机和目标的世界roll均为0，扩展距离、高差、俯仰、斜视、渲染光照及运动。设计距离分桶为0.3–8m；有效几何标签实际覆盖训练0.36–8.00m、静态测试0.50–7.99m、连续测试0.57–7.61m，主要精度要求为3–5m；不表示范围内所有姿态和每一帧必定识别。不可见或单灯条情况允许拒识，按图像证据定义共同总体并报告覆盖。
+
+原报告3–5m回归集的同一双灯条支持总体：本次角点P95 **0.239px**、深度P95 **6.59cm**、横向P95 **0.936cm**，有效490/497；原报告精定位分别为0.240px、6.90cm、0.941cm，497/497。这是精度保持回归；独立封存结果、均值/中位数及完整预测对比见EVALUATION.md。单帧精度保持并不保证原预测器同步改善。
+
+独立扩展静态测试的3–5m双灯条支持总体为283个对象：本版有效228（80.6%），角点P95为1.055px、深度27.12cm、横向6.50cm；深大原始模型分别为1.559px、23.32cm、5.47cm，有效268（94.7%）。因此本版通过的是原报告精度保持，不能声称扩展域全部优于深大或已满足全场景未来5cm。
+
+## 可用模型资源
+
+本版资源位于 `weights/number3-roll0-v2/`，原报告权重原样保留。
 
 | 文件 | 用途 |
 | --- | --- |
-| weights/native_roi_spatial.pt | 空间精定位推理权重，纯Tensor与元数据，可用weights_only=True加载 |
-| weights/native_roi_spatial.onnx | 含角点解码的FP32 ONNX，输入B×3×128×128，输出B×4×2原生裁块像素坐标 |
-| weights/native_roi_training_002000.pt | 原始2000步训练检查点，含优化器、AMP与随机状态，原文件SHA256保留 |
-| weights/proposal_yolo3200.pt | 本次整图验证使用的冻结粗检测器，基于YOLO11n-pose特征，输出只保留候选中心 |
-| weights/manifest.json | 文件哈希、原始来源、输入输出及使用范围 |
+| number3_roll0_fine.pt | 新角点分支＋冻结报告分支＋物理模板＋已验收推理配置 |
+| number3_roll0_proposal.pt | 整张原生图粗检测权重，输入1440×1080补8行 |
+| number3_roll0_landmark_training.pt | 实际4000步角点训练检查点，含优化器和AMP状态 |
+| landmark128.onnx | 新角点分支，动态batch、128×128原生裁块，输出四角及峰值概率 |
+| report128.onnx | 冻结报告分支，相同输入/输出结构 |
+| proposal_fullnative.onnx | 整图粗提议网络，固定输入1×3×1088×1440 |
+| manifest.json | 文件哈希、输入输出约定与实际导出校验 |
 
-所有权重均实际放在Git仓库中。没有Git LFS指针或运行时下载模型的步骤。模型适用范围为本轮模拟器3号板；真实相机与Jetson NX尚未验收。
+PT与ONNX实际置于仓库，没有LFS指针或运行时模型下载。深大仅作为评测基线，不在这里二次分发。PDF简报单独交付，不放入GitHub。
 
-## 安装与推理
+## 安装与整图推理
 
-推荐Python3.10、PyTorch2.5.1与匹配的CUDA环境；来源环境见requirements-tested.txt。
-
-```bash
-python -m pip install -e '.[proposal,export]'
-armor-infer --image /path/to/frame.png --output predictions.json --device cuda
-```
-
-整图入口使用本次验证的1440×1080原生12裁块粗检测网格。每条输出包含原图四角、候选中心、相机XYZ（米）及PnP重投影误差。相机参数在configs/camera_simulator.json；本轮PnP使用测量标记矩形133.7707×53.8873mm。
-
-已有检测器或因果跟踪中心时可以只运行精定位，无需Ultralytics：
+从仓库根执行，环境版本见requirements-tested.txt：
 
 ```bash
-armor-infer --image /path/to/frame.png --centers centers.json --output predictions.json --device cuda
+python -m pip install -e '.[proposal,export,research]'
+PYTHONPATH=src python scripts/infer_broad.py   --image /path/to/frame.png   --weights weights/number3-roll0-v2/number3_roll0_fine.pt   --proposal-weights weights/number3-roll0-v2/number3_roll0_proposal.pt   --proposal-mode full_native --device cuda --output predictions.json
 ```
 
-centers.json形如`[[720.5,540.2],[810.1,550.8]]`。推理输入不接收真值角点、深度或物理槽位。
+输入RGB必须是当前标定的1440×1080。固定模拟器内参在configs/camera_simulator.json。真实相机必须另行标定并验收，不能把该模拟器K直接当作CS016标定结果。
 
-## 训练
+输出包含四角、相机XYZ（米）、粗定位置信度、分支选择、图像证据和拒识原因；`xyz_m` 非空才是有效观测。`raw_xyz_m` 只是拒识前诊断值。在线入口不接收目标真值、距离、身份槽位或未来状态。旧的 `armor-infer` 命令仍对应原报告版入口。
 
-先按[DATASET.md](DATASET.md)组织训练和验证JSONL，按独立会话分割；图像与标签留在数据目录中。
+## 训练与复现
+
+完整零roll训练链、JSONL额外字段、独立分集和导出命令见[TRAINING_ROLL0.md](TRAINING_ROLL0.md)。当前精定位主干仍为自定义70,012参数的空间热图/偏移网络；新旧两个分支合计140,024参数，粗网络另计。本版新分支有实际4000次优化更新，不是只导出了旧权重。
 
 ```bash
-armor-manifest --annotations /data/train/session-a/annotations.jsonl /data/train/session-b/annotations.jsonl --output /data/train.jsonl
-armor-train --train /data/train.jsonl --val /data/dev.jsonl --output runs/roi --steps 2000
+PYTHONPATH=src python -m pytest tests -q
 ```
 
-默认复用本次精定位配方：batch16、AdamW、学习率0.002→0.0002余弦、weight_decay0.0001、梯度裁剪5、FP16 AMP、seed20261024、±8px中心扰动；距离/朝向格内按会话均衡。只用RGB和固定ROI坐标通道进行前向。
+原始采集、标签、全部实验检查点与完整模拟器Release在独立备份中保留，不作为本模型仓库的内置数据集。时序采集和11维EKF仍属于预测消费者仓库；本仓库公开模型、训练代码和评测证据，不包含整套自动瞄准消费者。
 
-```bash
-armor-train --train /data/train.jsonl --val /data/dev.jsonl --output runs/resumed --steps 2000 --resume runs/roi/checkpoint-001000.pt
-armor-export --weights weights/native_roi_spatial.pt --output runs/native_roi_spatial.onnx
-PYTHONPATH=src python -m unittest discover -s tests -v
-```
-
-训练输出目录必须是新目录；每200步先保存检查点再评分。训练命令中的验证是“真值中心加扰动”的ROI诊断，端到端成绩另见[评测说明](EVALUATION.md)。本仓库主训练入口训练精定位网络；粗检测器在本轮作为冻结资源，原始训练过程的来源哈希见research/provenance.json。
-
-## 来源与资产
-
-本仓库从内部aim-stack/prediction研究原型独立整理，来源提交a91f760；模型与原训练过程的来源哈希见research/provenance.json，当前完整精定位训练实现位于src/armor_native。原始采集、标签和完整模拟器Release保留在源工作区，未作为模型代码仓库的依赖复制。新仓库可以用自己的同格式数据训练与推理。
-
-本仓库按AGPL-3.0开源，后续持续维护。原始深大模型只作为评测基线，未在此二次分发。Ultralytics相关资源遵守其单独许可证，见[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+本轮仅为模拟器3号板；真实运动模糊、真实相机、Jetson NX/TensorRT及2027新外观未验收。开源许可AGPL-3.0，Ultralytics派生组件遵守对应许可，见[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。后续持续更新。

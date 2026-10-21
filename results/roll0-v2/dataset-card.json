@@ -1,0 +1,346 @@
+{
+  "simulator_version": "1.4.0-learning-r3",
+  "native_RGB": [
+    1440,
+    1080
+  ],
+  "camera_K": [
+    [
+      1303.675283386667,
+      0,
+      720
+    ],
+    [
+      0,
+      1303.675283386667,
+      540
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "distortion": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "roll_policy": "camera and target world roll0, every collected exposure verified",
+  "motion_blur": "physical exposure integration not available",
+  "distance_bins_m": [
+    [
+      0.3,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      7,
+      8
+    ]
+  ],
+  "splits": {
+    "static/train": {
+      "manifest_sha256": "d03f26685bd48fbc691d2789087bc621a4d56e2813650f9aaf97517dc85c5066",
+      "frames": 7680,
+      "sessions": 1632,
+      "geometrically_eligible_objects": 12688,
+      "by_range": {
+        "0": 1005,
+        "1": 1624,
+        "2": 1625,
+        "3": 1813,
+        "4": 1593,
+        "5": 1704,
+        "6": 1716,
+        "7": 1608
+      },
+      "by_light_frames": {
+        "dark": 2560,
+        "normal": 2560,
+        "bright": 2560
+      },
+      "by_motion_frames": {
+        "stationary": 1920,
+        "linear": 1920,
+        "spin": 1920,
+        "combined": 1920
+      },
+      "actual_range_m": [
+        0.3588031234226282,
+        7.998300211849409
+      ],
+      "actual_relative_height_m": [
+        -0.8357868706448865,
+        0.9615878533521538
+      ],
+      "actual_target_pitch_deg": [
+        -24.992151331368227,
+        24.970676795091073
+      ],
+      "configured_max_abs_camera_roll_deg": 0.0,
+      "actual_max_abs_camera_roll_deg": 2.6803559381171938e-05,
+      "configured_max_abs_target_roll_deg": 0.0,
+      "actual_max_abs_target_roll_deg": 0.00010685363803941334,
+      "roll_verification": "same-exposure actual camera/target quaternion calculation by collector; configuration values reported separately"
+    },
+    "static/dev": {
+      "manifest_sha256": "97525ece4260893848fce8b328085586041b396abdc1530dbccc8c4cfe7bf81e",
+      "frames": 1280,
+      "sessions": 224,
+      "geometrically_eligible_objects": 2034,
+      "by_range": {
+        "0": 166,
+        "1": 259,
+        "2": 319,
+        "3": 283,
+        "4": 210,
+        "5": 250,
+        "6": 319,
+        "7": 228
+      },
+      "by_light_frames": {
+        "dark": 512,
+        "normal": 384,
+        "bright": 384
+      },
+      "by_motion_frames": {
+        "stationary": 320,
+        "linear": 320,
+        "spin": 320,
+        "combined": 320
+      },
+      "actual_range_m": [
+        0.5256849207340268,
+        7.925211254730637
+      ],
+      "actual_relative_height_m": [
+        -0.7946303932978542,
+        0.9219971127021995
+      ],
+      "actual_target_pitch_deg": [
+        -24.789668938177535,
+        24.952583230614813
+      ],
+      "configured_max_abs_camera_roll_deg": 0.0,
+      "actual_max_abs_camera_roll_deg": 2.8114931565447688e-05,
+      "configured_max_abs_target_roll_deg": 0.0,
+      "actual_max_abs_target_roll_deg": 3.1403486205464315e-05,
+      "roll_verification": "same-exposure actual camera/target quaternion calculation by collector; configuration values reported separately"
+    },
+    "static/sealed": {
+      "manifest_sha256": "0b8ab2e1044295bf39102675c224a334fb7eeda54169fcd861e8caacef881d96",
+      "frames": 1280,
+      "sessions": 224,
+      "geometrically_eligible_objects": 2105,
+      "by_range": {
+        "0": 125,
+        "1": 305,
+        "2": 256,
+        "3": 253,
+        "4": 307,
+        "5": 281,
+        "6": 330,
+        "7": 248
+      },
+      "by_light_frames": {
+        "dark": 512,
+        "normal": 384,
+        "bright": 384
+      },
+      "by_motion_frames": {
+        "stationary": 320,
+        "linear": 320,
+        "spin": 320,
+        "combined": 320
+      },
+      "actual_range_m": [
+        0.49873501969076567,
+        7.993137153254897
+      ],
+      "actual_relative_height_m": [
+        -0.7381284479319219,
+        1.003691107903987
+      ],
+      "actual_target_pitch_deg": [
+        -24.318151533347233,
+        24.901874919090268
+      ],
+      "configured_max_abs_camera_roll_deg": 0.0,
+      "actual_max_abs_camera_roll_deg": 2.241884190536647e-05,
+      "configured_max_abs_target_roll_deg": 0.0,
+      "actual_max_abs_target_roll_deg": 0.00015258716432741974,
+      "roll_verification": "same-exposure actual camera/target quaternion calculation by collector; configuration values reported separately"
+    },
+    "continuous/sealed": {
+      "manifest_sha256": "6fa31ecf3db44228a6e8088c649a5ff4373feadbf1e71bfec7cc9fc60c190573",
+      "frames": 4320,
+      "sessions": 36,
+      "geometrically_eligible_objects": 7501,
+      "by_range": {
+        "0": 474,
+        "1": 599,
+        "2": 656,
+        "3": 1786,
+        "4": 1978,
+        "5": 669,
+        "6": 667,
+        "7": 672
+      },
+      "by_light_frames": {
+        "normal": 1440,
+        "bright": 1440,
+        "dark": 1440
+      },
+      "by_motion_frames": {
+        "combined": 1440,
+        "linear": 1440,
+        "spin": 1440
+      },
+      "actual_range_m": [
+        0.5715352233183796,
+        7.605489949414623
+      ],
+      "actual_relative_height_m": [
+        -0.28401322077598723,
+        0.3797178912310626
+      ],
+      "actual_target_pitch_deg": [
+        -15.0,
+        15.0
+      ],
+      "configured_max_abs_camera_roll_deg": 0.0,
+      "actual_max_abs_camera_roll_deg": 0.0,
+      "configured_max_abs_target_roll_deg": 0.0,
+      "actual_max_abs_target_roll_deg": 0.00015478844774209361,
+      "roll_verification": "same-exposure actual camera/target quaternion calculation by collector; configuration values reported separately"
+    }
+  },
+  "observable_supervision": {
+    "rule": {
+      "version": "two-lamp-v1",
+      "chroma_min": 35,
+      "peak_min": 80,
+      "support_min": 0.65,
+      "minimum_length_px": 4.0,
+      "minimum_separation_px": 3.0
+    },
+    "sealed_opened": false,
+    "splits": {
+      "train": {
+        "frames": 7680,
+        "counts": {
+          "objects": 6602,
+          "unobservable_objects": 6086
+        },
+        "by_range": {
+          "0": {
+            "objects": 648,
+            "unobservable_objects": 357
+          },
+          "1": {
+            "objects": 1025,
+            "unobservable_objects": 599
+          },
+          "2": {
+            "objects": 977,
+            "unobservable_objects": 648
+          },
+          "3": {
+            "objects": 983,
+            "unobservable_objects": 830
+          },
+          "4": {
+            "objects": 821,
+            "unobservable_objects": 772
+          },
+          "5": {
+            "objects": 795,
+            "unobservable_objects": 909
+          },
+          "6": {
+            "objects": 750,
+            "unobservable_objects": 966
+          },
+          "7": {
+            "unobservable_objects": 1005,
+            "objects": 603
+          }
+        },
+        "source_sha256": "d03f26685bd48fbc691d2789087bc621a4d56e2813650f9aaf97517dc85c5066"
+      },
+      "dev": {
+        "frames": 1280,
+        "counts": {
+          "objects": 1182,
+          "unobservable_objects": 852
+        },
+        "by_range": {
+          "0": {
+            "objects": 120,
+            "unobservable_objects": 46
+          },
+          "1": {
+            "objects": 173,
+            "unobservable_objects": 86
+          },
+          "2": {
+            "objects": 191,
+            "unobservable_objects": 128
+          },
+          "3": {
+            "unobservable_objects": 124,
+            "objects": 159
+          },
+          "4": {
+            "objects": 118,
+            "unobservable_objects": 92
+          },
+          "5": {
+            "objects": 138,
+            "unobservable_objects": 112
+          },
+          "6": {
+            "unobservable_objects": 147,
+            "objects": 172
+          },
+          "7": {
+            "objects": 111,
+            "unobservable_objects": 117
+          }
+        },
+        "source_sha256": "97525ece4260893848fce8b328085586041b396abdc1530dbccc8c4cfe7bf81e"
+      }
+    }
+  },
+  "independent_static_eligibility": {
+    "two_lamp_supported": 1073,
+    "unsupported": 1032
+  },
+  "scope": "fixed independent sessions; fully projected geometric labels, partial/unknown labels not confirmed negatives; no claim to exhaust continuous pose space"
+}

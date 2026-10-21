@@ -1,0 +1,350 @@
+{
+  "scope": "old report regression only; diagnostic, never used to tune frozen model or new sealed data",
+  "comparison": "all four variants on exactly common observable physical anchors; exposure timing only",
+  "controls": {
+    "report-old-with-visibility-gate": {
+      "kept_coordinates_exactly_equal_to_original": true,
+      "kept_outputs": 1058,
+      "neural_inference_rerun": false
+    },
+    "report-old-with-candidate-availability": {
+      "kept_coordinates_exactly_equal_to_original": true,
+      "kept_outputs": 1061,
+      "neural_inference_rerun": false
+    }
+  },
+  "methods": {
+    "new_model": "frozen new pipeline",
+    "original_model": "unchanged original report pipeline",
+    "original_plus_lamp_gate": "same original coordinates; image-only two-lamp rule added",
+    "original_at_new_availability": "same original coordinates; keep only 2D-center matches to new accepted image detections, no target truth"
+  },
+  "xy_definition": "camera transverse-plane norm, mm",
+  "horizons": {
+    "0": {
+      "common_anchors": 283,
+      "methods": {
+        "new_model": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 11.997094886856821,
+            "median": 3.2115719919447088,
+            "p95": 70.43135970441837
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 29.35577524125113,
+            "median": 16.44905484048329,
+            "p95": 107.08301603722279
+          }
+        },
+        "original_model": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 7.462715309946602,
+            "median": 2.8838147971757735,
+            "p95": 17.365799450007064
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 25.649812631323332,
+            "median": 13.684721521358185,
+            "p95": 109.34960430810175
+          }
+        },
+        "original_plus_lamp_gate": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 10.363726944969445,
+            "median": 2.87699960167811,
+            "p95": 68.81901547179814
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 25.306944807184884,
+            "median": 15.798340745825888,
+            "p95": 94.42710639572265
+          }
+        },
+        "original_at_new_availability": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 8.833218816845577,
+            "median": 2.847061180517377,
+            "p95": 49.9421739483939
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 26.26265514358414,
+            "median": 15.368595599676246,
+            "p95": 98.58451943799534
+          }
+        }
+      }
+    },
+    "100": {
+      "common_anchors": 283,
+      "methods": {
+        "new_model": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 13.773878481974728,
+            "median": 4.4932955665861085,
+            "p95": 61.661392930672875
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 32.16172895153636,
+            "median": 19.294603440191594,
+            "p95": 129.13943473678756
+          }
+        },
+        "original_model": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 9.251138672333457,
+            "median": 3.797032054182924,
+            "p95": 25.30790728604277
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 33.2121395472764,
+            "median": 16.009672938822984,
+            "p95": 152.41522560668795
+          }
+        },
+        "original_plus_lamp_gate": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 11.158928707329192,
+            "median": 3.656451242460909,
+            "p95": 57.310494734796
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 31.037767975569643,
+            "median": 18.786574218311404,
+            "p95": 120.88563159950834
+          }
+        },
+        "original_at_new_availability": {
+          "xy_mm": {
+            "n": 283,
+            "mean": 9.938695255915027,
+            "median": 3.6847724238171238,
+            "p95": 47.808889560725696
+          },
+          "z_mm": {
+            "n": 283,
+            "mean": 30.80820367259905,
+            "median": 17.514006013314543,
+            "p95": 119.98359072334422
+          }
+        }
+      }
+    },
+    "200": {
+      "common_anchors": 282,
+      "methods": {
+        "new_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 17.49951752352027,
+            "median": 5.5412739021413895,
+            "p95": 69.51773568385414
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 44.77275765383193,
+            "median": 20.45333845448624,
+            "p95": 204.83257459032617
+          }
+        },
+        "original_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 12.044200656976164,
+            "median": 5.135070098094362,
+            "p95": 41.54555683295837
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 46.709518897306204,
+            "median": 19.787703678893692,
+            "p95": 199.90338188793044
+          }
+        },
+        "original_plus_lamp_gate": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 13.094406834882513,
+            "median": 4.561868689658544,
+            "p95": 58.338636786536334
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 43.356922023190606,
+            "median": 18.10035061905498,
+            "p95": 254.6216282765751
+          }
+        },
+        "original_at_new_availability": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 12.26447898395791,
+            "median": 4.5006768130947945,
+            "p95": 58.192526959846404
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 42.58206707965783,
+            "median": 18.59375924188028,
+            "p95": 208.86645921213758
+          }
+        }
+      }
+    },
+    "300": {
+      "common_anchors": 282,
+      "methods": {
+        "new_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 23.283579105463357,
+            "median": 6.861504990067543,
+            "p95": 99.74342895411468
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 65.61194168429047,
+            "median": 24.909138048841427,
+            "p95": 313.3865476958742
+          }
+        },
+        "original_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 15.659754918945636,
+            "median": 6.282838371600258,
+            "p95": 84.12107658188174
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 65.64327221061521,
+            "median": 23.173407726231126,
+            "p95": 310.0037817587129
+          }
+        },
+        "original_plus_lamp_gate": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 16.08491064972917,
+            "median": 5.456622267135495,
+            "p95": 76.22331113082919
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 63.37311893306331,
+            "median": 22.96341449356914,
+            "p95": 356.4571090018475
+          }
+        },
+        "original_at_new_availability": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 15.747066954176445,
+            "median": 5.356098198609803,
+            "p95": 83.63282736669655
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 62.67505318353356,
+            "median": 23.831502352029815,
+            "p95": 313.47625947339606
+          }
+        }
+      }
+    },
+    "500": {
+      "common_anchors": 282,
+      "methods": {
+        "new_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 38.374151778810194,
+            "median": 10.770294083379186,
+            "p95": 173.9099513810736
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 121.26439656457875,
+            "median": 36.42194983004448,
+            "p95": 739.4395082153194
+          }
+        },
+        "original_model": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 25.662075458157027,
+            "median": 9.85046891847946,
+            "p95": 146.458367969851
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 115.62718172568928,
+            "median": 29.364143743850583,
+            "p95": 741.8991803123087
+          }
+        },
+        "original_plus_lamp_gate": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 25.315940307952083,
+            "median": 8.654958073020012,
+            "p95": 152.18528884424978
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 116.85289061318873,
+            "median": 30.37366136688547,
+            "p95": 783.0243556311844
+          }
+        },
+        "original_at_new_availability": {
+          "xy_mm": {
+            "n": 282,
+            "mean": 25.45853881819225,
+            "median": 8.719703246508129,
+            "p95": 152.7130393621132
+          },
+          "z_mm": {
+            "n": 282,
+            "mean": 116.38545008259604,
+            "median": 31.177245757089274,
+            "p95": 748.0644128393959
+          }
+        }
+      }
+    }
+  },
+  "interpretation": "With original coordinates unchanged, image evidence refusal alone worsens100ms P95, supporting an observation-availability contribution. The new pipeline also differs from the original-coordinate availability control; the entire gap is not attributed solely to refusal. No all-condition5cm claim.",
+  "provenance": {
+    "new_model": {
+      "prediction_sha256": "db00c24ec5d0582aaa2608b29f65129bdabd8d5999f6cee9f8ce5eb6c2b9597c",
+      "scoring_result_sha256": "bd22b86186e91a3f3584f828d0aca176e6e9c195ab0557a16a94262721aa6e11"
+    },
+    "original_model": {
+      "prediction_sha256": "db00c24ec5d0582aaa2608b29f65129bdabd8d5999f6cee9f8ce5eb6c2b9597c",
+      "scoring_result_sha256": "bd22b86186e91a3f3584f828d0aca176e6e9c195ab0557a16a94262721aa6e11"
+    },
+    "original_plus_lamp_gate": {
+      "prediction_sha256": "70af4038a48cc719a3361c37327ed2c30c5c98d856cb57b698685b5a8cc69d51",
+      "scoring_result_sha256": "e36759f05c2c16db93c26b7222c4a19d98a7ff700c7f54d814bb184b6c7d9b27"
+    },
+    "original_at_new_availability": {
+      "prediction_sha256": "2004e814d94594809852fd561432b9462cfa5c82f4c0138d8854eb9f8a621d3e",
+      "scoring_result_sha256": "911a3b9c47e25fe7fdfd3e935bb61184fdafb4d30e945fd024afc7661ecfa57c"
+    }
+  },
+  "control_metadata_note": "Control plan checkpoint/proposal and component latency fields inherited from source plan are not execution inputs; these controls reuse stored report observations, load no neural weights, and expose no measured availability-timing result."
+}

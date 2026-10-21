@@ -1,0 +1,18 @@
+{
+  "source_sha256": "b9673eb9072736fb7c3491317c3f879e72fe06a9c20d801be00f43acc18552be",
+  "results_sha256": "f8936e55dfee4afa6f6723634a945be33216334f1d9071c856a12eaec4eed708",
+  "observations_sha256": "a370d98ee3b4f005febc4453b92037aedac412265d208a1d8cb9971d924b11e2",
+  "predictions_sha256": "83cb1d7bf6912989c299f4ec6d8f692f1aa7a51e5dd74797244c29ba2a6fa3a8",
+  "dataset": "fresh",
+  "all_outliers_retained": true,
+  "trajectory_rule": "first sorted normal-light session with >=10 forecasts at300ms, independently per motion; fallback any light; physical slot0; no error-based selection",
+  "units": "trajectories m; errors mm; corners px",
+  "primary_range_definition": "Euclidean camera-to-physical-plate range",
+  "selected_sessions": {
+    "linear": "temporal-roll0-b3-normal-linear",
+    "spin": "temporal-roll0-b3-normal-spin",
+    "combined": "temporal-roll0-b3-normal-combined"
+  },
+  "population": "independent two-lamp image evidence",
+  "static_results_sha256": "ca35314b09f89f4030f979e6f8ce5599459daa8a3d1aae1c73af35b935c3a923"
+}

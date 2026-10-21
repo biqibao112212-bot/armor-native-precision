@@ -1,3 +1,5 @@
+> 本页记录原报告版0.1的基础格式和训练配方。零roll扩展版0.2的完整额外字段、7680帧训练与新训练链见[TRAINING_ROLL0.md](TRAINING_ROLL0.md)，实际覆盖见[dataset-card.json](results/roll0-v2/dataset-card.json)。
+
 # 数据与训练配方
 
 每行一个完整曝光的JSON对象：

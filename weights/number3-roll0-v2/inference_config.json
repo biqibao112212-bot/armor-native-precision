@@ -1,0 +1,62 @@
+{
+  "geometry": [
+    [
+      -0.06690025329589844,
+      0.0027022361755371094,
+      -0.02698993682861328
+    ],
+    [
+      -0.06687068939208984,
+      0.0027065277099609375,
+      0.02689528465270996
+    ],
+    [
+      0.06689691543579102,
+      0.0027022361755371094,
+      0.026865720748901367
+    ],
+    [
+      0.06687355041503906,
+      0.002705097198486328,
+      -0.0270235538482666
+    ]
+  ],
+  "proposal_threshold": 0.1,
+  "minimum_corner_probability": 0.1,
+  "report_agreement_max_px": 1.5,
+  "RGB_resized": false,
+  "roll": "camera and target worldroll0",
+  "visibility_rule": {
+    "version": "two-lamp-v1",
+    "chroma_min": 35,
+    "peak_min": 80,
+    "support_min": 0.65,
+    "minimum_length_px": 4.0,
+    "minimum_separation_px": 3.0
+  },
+  "route": "four native128 patches at image-based coarse corners; report128 used only when both image-supported estimates agree within1.5px on every corner",
+  "refined_duplicate_max_px": 3.0,
+  "report_recenter": true,
+  "report_crop_offsets": [
+    [
+      -2,
+      0
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      0,
+      -2
+    ],
+    [
+      0,
+      2
+    ]
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "schema": "armor-native.landmark-roll0-assets/1",
+  "source_training": {
+    "fine_sha256": "aa8adb8d0b80c647c0b297f41560ce8c4d7dbd51ddb7b4e67f84c4c1b18b9e70",
+    "proposal_sha256": "704ca205e126f70353eecc5742331efbd7e6e0d6b95a808e3c64b4ba7dd15be0",
+    "landmark_training_sha256": "b6992467965c4c271cb68e3fdbdebb5dbdc3a1cb3d4c6d397be6810ce033dc97"
+  },
+  "input": "RGB original1440x1080; proposer pads8 rows; fine four128 integer crops; no RGB resize",
+  "fine_decode": "For four landmark patches i=0..3 select output corners_px[i,i] then add integer crop origin; use report branch only by image evidence and agreement rule in Python reference",
+  "fine_parity": [
+    {
+      "branch": "landmark128",
+      "source_range_bin": 0,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 1.6093254089355469e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 1,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 1.6689300537109375e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 1,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 3.5762786865234375e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 1,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 7.152557373046875e-07
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 2,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 1.430511474609375e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 2,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 3.814697265625e-06,
+      "max_probability_delta": 5.364418029785156e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 2,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.430511474609375e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 3,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 3.814697265625e-06,
+      "max_probability_delta": 1.3113021850585938e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 3,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 3.814697265625e-06,
+      "max_probability_delta": 2.4884939193725586e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 3,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 3.2782554626464844e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 4,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 8.940696716308594e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 4,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 8.344650268554688e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 4,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.3113021850585938e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 5,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.4901161193847656e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 5,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 1.3113021850585938e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 5,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.3113021850585938e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 6,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 8.940696716308594e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 6,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 7.748603820800781e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 6,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.0728836059570312e-06
+    },
+    {
+      "branch": "landmark128",
+      "source_range_bin": 7,
+      "batch": 4,
+      "outputs_checked": "queried semantic output[i,i], the deployed contract",
+      "max_coordinate_delta_px": 7.62939453125e-06,
+      "max_probability_delta": 1.2516975402832031e-06
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 7,
+      "batch": 1,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 0.0,
+      "max_probability_delta": 8.344650268554688e-07
+    },
+    {
+      "branch": "report128",
+      "source_range_bin": 7,
+      "batch": 5,
+      "outputs_checked": "all four corners in native whole-plate crops",
+      "max_coordinate_delta_px": 3.814697265625e-06,
+      "max_probability_delta": 2.2649765014648438e-06
+    }
+  ],
+  "coarse_parity_max_abs_delta": [
+    0.0014144182205200195,
+    0.0008361637592315674
+  ],
+  "deployment_PT_equivalence": "All trained model/report tensors, geometry and inference config exactly equal to validated source; private path metadata removed; original training checkpoint preserved in backup",
+  "validation": "CPU FP32 PyTorch/ONNX Runtime on TRAIN native crops; not TensorRT/NX acceptance",
+  "files": {
+    "inference_config.json": {
+      "bytes": 1162,
+      "sha256": "1fbce949ddab3c0fa326dddf82b24b4ac42221bacd14076b822d35eee4f4a598"
+    },
+    "landmark128.onnx": {
+      "bytes": 465163,
+      "sha256": "ae91c1eeb250d5e540d7910f7441378e8d7cd3557751e834945f708258d605d2"
+    },
+    "number3_roll0_fine.pt": {
+      "bytes": 865348,
+      "sha256": "2ed8754c0fb74909a6016c5045f2c8ae1726c511767f52f62bab788054bf285a"
+    },
+    "number3_roll0_landmark_training.pt": {
+      "bytes": 1045848,
+      "sha256": "29d9623d16358214cdcbf764a1b981bad603dcbb8e869b2206b827e0179f2741"
+    },
+    "number3_roll0_proposal.pt": {
+      "bytes": 12189087,
+      "sha256": "2acd42996a71ccb84eb59aa0f85dda6a6b8409318098d5fe04120e25e52b38cf"
+    },
+    "proposal_fullnative.onnx": {
+      "bytes": 6487276,
+      "sha256": "ae50155e52cd644884ba3dd019ebea089f20e35741b065dc71d35d2c07fade5d"
+    },
+    "report128.onnx": {
+      "bytes": 465163,
+      "sha256": "f24bcd652b3ae857c0b3c211bf7dbb50110a98f53b1d44f5e523ef095ee0fdb0"
+    }
+  }
+}
