@@ -6,6 +6,7 @@ The old128 model and its checkpoint remain unchanged.
 import numpy as np,torch,cv2
 from torch.nn import functional as F
 from .model import RoiPrecision
+from .observability import lamp_evidence
 
 class NativeBucketPrecision(RoiPrecision):
  def __init__(self):super().__init__('spatial')
@@ -52,8 +53,8 @@ class BroadNativeLocalizer:
     result.append({'score':p.get('score',1.),'proposal_center':p['center'],'xyz_m':None,'reason':'native_extent_exceeds_supported_bucket'});continue
    patch,origin,_=crop_native(image,p['center'],size);x=torch.from_numpy(patch.transpose(2,0,1).copy())[None].float().to(self.device)/255
    with torch.autocast('cuda',dtype=torch.float16,enabled=self.device.type=='cuda'):pred=self.model(x)
-   c=self.model.points(pred).cpu().numpy()[0]+origin;pose=solve_physical(c,K,self.template)
-   result.append({'score':p.get('score',1.),'proposal_center':p['center'],'native_size':size,'corners':c.tolist(),'corner_order':['physical_left_bottom','physical_left_top','physical_right_top','physical_right_bottom'],'corner_peak_probabilities':pred['heatmap'].float().sigmoid().flatten(2).max(-1).values[0].cpu().tolist(),'xyz_m':None if pose is None else pose['xyz_m'],'reprojection_rms_px':None if pose is None else pose['reprojection_rms_px']})
+   c=self.model.points(pred).cpu().numpy()[0]+origin;pose=solve_physical(c,K,self.template);evidence=lamp_evidence(image,c);raw_xyz=None if pose is None else pose['xyz_m']
+   result.append({'score':p.get('score',1.),'proposal_center':p['center'],'native_size':size,'corners':c.tolist(),'corner_order':['physical_left_bottom','physical_left_top','physical_right_top','physical_right_bottom'],'corner_peak_probabilities':pred['heatmap'].float().sigmoid().flatten(2).max(-1).values[0].cpu().tolist(),'xyz_m':raw_xyz if evidence['accepted'] else None,'raw_xyz_m':raw_xyz,'image_evidence':evidence,'reprojection_rms_px':None if pose is None else pose['reprojection_rms_px']})
   return result
 
 

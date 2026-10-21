@@ -12,6 +12,7 @@ from armor_native.model import RoiPrecision
 from armor_native.broad import NativeBucketPrecision,NativeGlobalPrecision,solve_physical,statistics
 from armor_native.geometry import crop_native,solve_geometry
 from armor_native.data import rgb
+from armor_native.observability import lamp_evidence,RULE
 from armor_native.proposals import NativeProposer
 
 def dump(p,x):
@@ -30,7 +31,8 @@ def refine(model,image,proposals,K,template,adaptive):
   patch,origin,_=crop_native(image,p['center'],size);x=torch.from_numpy(patch.transpose(2,0,1).copy())[None].float().cuda()/255
   with torch.autocast('cuda',dtype=torch.float16):pred=model(x)
   corners=model.points(pred).cpu().numpy()[0]+origin;pose=solve_physical(corners,K,template) if adaptive else solve_geometry(corners,K)
-  result.append({'center':p['center'],'proposal_center':p['center'],'score':p['score'],'corners':corners.tolist(),'xyz':None if pose is None else pose['xyz_m'],'native_size':size})
+  evidence=lamp_evidence(image,corners);raw_xyz=None if pose is None else pose['xyz_m']
+  result.append({'image_evidence':evidence,'raw_xyz':raw_xyz,'center':p['center'],'proposal_center':p['center'],'score':p['score'],'corners':corners.tolist(),'xyz':raw_xyz if (not adaptive or evidence['accepted']) else None,'native_size':size})
  return result
 @torch.inference_mode()
 def proposals_with_extent(proposer,image):
@@ -43,9 +45,9 @@ def score_frame(frame,predictions,physical):
   pairs={j:i for i,j in zip(ii,jj) if d[i,j]<=max(8,.15*gt[j]['extent_px'])}
  rows=[]
  for j,g in enumerate(gt):
-  r={'session':frame['session'],'frame_seq':frame['frame_seq'],'slot':g['slot'],'range_bin':g['range_bin'],'range_m':g['range_m'],'facing_cos':g['facing_cos'],'light':frame['light'],'mode':frame['mode'],'camera_roll_deg':frame['camera_roll_deg'],'target_roll_deg':frame['target_roll_deg'],'target_pitch_deg':frame['target_pitch_deg'],'height_difference_m':g['height_difference_m'],'detected':j in pairs,'valid_pnp':False}
+  r={'session':frame['session'],'frame_seq':frame['frame_seq'],'slot':g['slot'],'range_bin':g['range_bin'],'range_m':g['range_m'],'facing_cos':g['facing_cos'],'light':frame['light'],'mode':frame['mode'],'camera_roll_deg':frame['camera_roll_deg'],'target_roll_deg':frame['target_roll_deg'],'target_pitch_deg':frame['target_pitch_deg'],'height_difference_m':g['height_difference_m'],'observable':g.get('lamp_evidence',{}).get('accepted'),'detected':j in pairs,'valid_pnp':False}
   if j in pairs:
-   p=predictions[pairs[j]];want=np.array(g['corners'] if physical else g['screen_corners']);r['corner_rms_px']=float(np.sqrt(np.mean((np.array(p['corners'])-want)**2)))
+   p=predictions[pairs[j]];want=np.array(g['corners'] if physical else g['screen_corners']);r['corner_rms_px']=float(np.sqrt(np.mean((np.array(p['corners'])-want)**2)));r['image_rejected']=p.get('image_evidence',{}).get('accepted') is False
    if p['xyz'] is not None:
     delta=(np.array(p['xyz'])-g['xyz_m'])*1000;r.update(valid_pnp=True,depth_mm=float(abs(delta[2])),xy_mm=float(np.linalg.norm(delta[:2])),signed_xyz_mm=delta.tolist())
   rows.append(r)
@@ -78,6 +80,8 @@ def main():
  predictions=[json.loads(l) for l in (out/'image-only-predictions.jsonl').open()];scored=collections.defaultdict(list)
  for f,p in zip(frames,predictions):
   assert (f['session'],f['frame_seq'])==(p['session'],p['frame_seq'])
+  im=rgb(f['image_path'])
+  for g in f['objects']:g['lamp_evidence']=lamp_evidence(im,g['corners'])
   for method,pp in p['methods'].items():scored[method].extend(score_frame(f,pp,method in ['broad_native','new_fine_old_proposals']))
  # Separate GT-centered oracle diagnosis of the fine head: every test object,
  # same integer anchors, old128 retained, no detector coverage claim.
@@ -91,10 +95,10 @@ def main():
     with torch.inference_mode(),torch.autocast('cuda',dtype=torch.float16):pred=net(x)
     c=net.points(pred).cpu().numpy()[0]+origin;pose=solve_physical(c,K,template) if physical else solve_geometry(c,K);p={'center':g['center'],'corners':c.tolist(),'xyz':None if pose is None else pose['xyz_m']};single={**f,'objects':[g]};oracle[name].extend(score_frame(single,[p],physical))
  def report(rows):
-  return {'all':summarize(rows),'primary_3_5m':summarize([r for r in rows if 3<=r['range_m']<=5]),'by_session':{k:summarize([r for r in rows if r['session']==k]) for k in sorted(set(r['session'] for r in rows))},'by_facing':{k:summarize([r for r in rows if lo<=r['facing_cos']<hi]) for k,lo,hi in [('grazing_12_25',.12,.25),('25_50',.25,.5),('50_75',.5,.75),('75_100',.75,1.001)]},'by_range':{str(k):summarize([r for r in rows if r['range_bin']==k]) for k in sorted(set(r['range_bin'] for r in rows))},'by_light':{k:summarize([r for r in rows if r['light']==k]) for k in ['dark','normal','bright']},'by_motion':{k:summarize([r for r in rows if r['mode']==k]) for k in ['stationary','linear','spin','combined']},'by_camera_roll':{k:summarize([r for r in rows if lo<=abs(r['camera_roll_deg'])<hi]) for k,lo,hi in [('0-4deg',0,4),('4-8deg',4,8),('8-12deg',8,12.001)]},'roll_height_oblique_combo':summarize([r for r in rows if abs(r['camera_roll_deg'])>=8 and abs(r['height_difference_m'])>=.3 and abs(r['target_pitch_deg'])>=10]),'by_target_roll':{k:summarize([r for r in rows if lo<=abs(r['target_roll_deg'])<hi]) for k,lo,hi in [('0-4deg',0,4),('4-8deg',4,8),('8-12deg',8,12.001)]},'by_height':{k:summarize([r for r in rows if lo<=abs(r['height_difference_m'])<hi]) for k,lo,hi in [('0-.2m',0,.2),('.2-.5m',.2,.5),('.5m+',.5,10)]}}
+  return {'all':summarize(rows),'primary_3_5m':summarize([r for r in rows if 3<=r['range_m']<=5]),'by_session':{k:summarize([r for r in rows if r['session']==k]) for k in sorted(set(r['session'] for r in rows))},'by_facing':{k:summarize([r for r in rows if lo<=r['facing_cos']<hi]) for k,lo,hi in [('grazing_12_25',.12,.25),('25_50',.25,.5),('50_75',.5,.75),('75_100',.75,1.001)]},'by_range':{str(k):summarize([r for r in rows if r['range_bin']==k]) for k in sorted(set(r['range_bin'] for r in rows))},'by_light':{k:summarize([r for r in rows if r['light']==k]) for k in ['dark','normal','bright']},'by_motion':{k:summarize([r for r in rows if r['mode']==k]) for k in ['stationary','linear','spin','combined']},'by_pitch':{k:summarize([r for r in rows if lo<=abs(r['target_pitch_deg'])<hi]) for k,lo,hi in [('0-5deg',0,5),('5-15deg',5,15),('15deg+',15,90)]},'height_pitch_oblique_combo':summarize([r for r in rows if abs(r['height_difference_m'])>=.3 and abs(r['target_pitch_deg'])>=10 and r['facing_cos']<.5]),'by_camera_roll':{k:summarize([r for r in rows if lo<=abs(r['camera_roll_deg'])<hi]) for k,lo,hi in [('0-4deg',0,4),('4-8deg',4,8),('8-12deg',8,12.001)]},'roll_height_oblique_combo':summarize([r for r in rows if abs(r['camera_roll_deg'])>=8 and abs(r['height_difference_m'])>=.3 and abs(r['target_pitch_deg'])>=10]),'by_target_roll':{k:summarize([r for r in rows if lo<=abs(r['target_roll_deg'])<hi]) for k,lo,hi in [('0-4deg',0,4),('4-8deg',4,8),('8-12deg',8,12.001)]},'by_height':{k:summarize([r for r in rows if lo<=abs(r['height_difference_m'])<hi]) for k,lo,hi in [('0-.2m',0,.2),('.2-.5m',.2,.5),('.5m+',.5,10)]}}
  for scope,methods in [('image_only',scored),('oracle_roi',oracle)]:
   with (out/(scope+'-scored.jsonl')).open('x') as log:
    for name,rows in methods.items():
     for r in rows:log.write(json.dumps({'method':name,**r})+'\n')
- result={'complete':True,'frames':len(frames),'single_frame_only':True,'future_prediction_accepted':False,'candidate_counts':{k:{'predictions_per_frame':statistics([len(p['methods'][k]) for p in predictions]),'total_predictions':sum(len(p['methods'][k]) for p in predictions),'outside_filtered_labels':sum(len(p['methods'][k]) for p in predictions)-sum(r['detected'] for r in v),'outside_is_not_confirmed_false_positive':True} for k,v in scored.items()},'image_only':{k:report(v) for k,v in scored.items()},'oracle_roi':{k:report(v) for k,v in oracle.items()},'latency_ms':{k:statistics([r[k] for r in times]) for k in times[0]},'seconds':time.monotonic()-started};dump(out/'result.json',result);print(json.dumps({'complete':True,'frames':len(frames),'output':str(out)}),flush=True)
+ result={'complete':True,'frames':len(frames),'single_frame_only':True,'future_prediction_accepted':False,'candidate_counts':{k:{'predictions_per_frame':statistics([len(p['methods'][k]) for p in predictions]),'total_predictions':sum(len(p['methods'][k]) for p in predictions),'outside_filtered_labels':sum(len(p['methods'][k]) for p in predictions)-sum(r['detected'] for r in v),'outside_is_not_confirmed_false_positive':True} for k,v in scored.items()},'observability_rule':RULE,'eligibility_counts':{'two_lamp_supported':sum(g['lamp_evidence']['accepted'] for f in frames for g in f['objects']),'unsupported':sum(not g['lamp_evidence']['accepted'] for f in frames for g in f['objects'])},'image_only_observable':{k:report([r for r in v if r['observable']]) for k,v in scored.items()},'image_only_unsupported':{k:report([r for r in v if not r['observable']]) for k,v in scored.items()},'image_only':{k:report(v) for k,v in scored.items()},'oracle_roi':{k:report(v) for k,v in oracle.items()},'latency_ms':{k:statistics([r[k] for r in times]) for k in times[0]},'seconds':time.monotonic()-started};dump(out/'result.json',result);print(json.dumps({'complete':True,'frames':len(frames),'output':str(out)}),flush=True)
 if __name__=='__main__':main()
