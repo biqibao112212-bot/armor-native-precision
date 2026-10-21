@@ -58,6 +58,8 @@ def main():
      if code:raise RuntimeError(f'collector exit {code}')
     finally:
      if proc.poll() is None:proc.terminate();proc.wait(timeout=5)
+   validator=globals().get('episode_validator')
+   if validator is not None:validator(d,spec)
    print(json.dumps({'episode':spec['id'],'split':spec['split'],'completed_frames':sum(1 for x in (out/'episodes').glob('*/frames.jsonl') for _ in x.open()),'native_png_bytes':total}),flush=True)
   dump(out/'collection-result.json',{'complete':True,'frames':sum(e['frames'] for e in p['episodes']),'episodes':len(p['episodes']),'native_png_bytes':total,'seconds':time.monotonic()-started,'input_rgb_resized':False})
  finally:
