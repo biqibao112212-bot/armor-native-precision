@@ -1,0 +1,16 @@
+{
+  "frozen_unix": 1792595575.3596652,
+  "before_any_sealed_model_score": true,
+  "evidence": "Dev1000/2000/3000 residual tails and inspected near/grazing corner confusion; one corner can land on digit3 texture even while other3 are correct",
+  "question": "Does whole-ROI context and a jointly supervised coarse4-corner prior improve physical corner assignment over independent local heatmap peaks?",
+  "candidate": "NativeGlobalPrecision: adaptive feature-only8x8 context, conv+residual encoder,4coarse logits upsampled and added to native logits; auxiliary normalized Gaussian CE weight.2",
+  "unchanged": "same fixed train/dev/sealed data, old spatial initialization,4000updates, same sampling/augmentation draws/LR and native image buckets; SZU remains baseline",
+  "selection": "precommitted final4000 global versus final4000 spatial, not best checkpoint based on sealed results; no further architecture sweep",
+  "caps": {
+    "additional_training_seconds": 2700,
+    "additional_training_updates": 4000,
+    "additional_assets_GiB": 1,
+    "minimum_free_GiB": 20
+  },
+  "validation": "128old-init function equivalence from zero coarse logits, finite gradients; train-fit vsdev, sealed full-image+oracle, pairedroll coverage and errors; no future5cm acceptance"
+}

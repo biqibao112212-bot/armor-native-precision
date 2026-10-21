@@ -10,7 +10,7 @@ def physical_order(p):
 def dump(p,x):
  with p.open('x') as f:json.dump(x,f,indent=2,allow_nan=False)
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('data');ap.add_argument('--extra-data',nargs='*',default=[]);a=ap.parse_args();root=Path(a.data);assert json.loads((root/'collection-result.json').read_text())['complete'];out=root/'prepared';out.mkdir(exist_ok=False)
+ ap=argparse.ArgumentParser();ap.add_argument('data');ap.add_argument('--extra-data',nargs='*',default=[]);ap.add_argument('--geometry',help='existing TRAIN-only fixed template for validation-only datasets');a=ap.parse_args();root=Path(a.data);assert json.loads((root/'collection-result.json').read_text())['complete'];out=root/'prepared';out.mkdir(exist_ok=False)
  frames=[];labels={}
  for data_root in [root,*map(Path,a.extra_data)]:
   assert json.loads((data_root/'collection-result.json').read_text())['complete']
@@ -30,8 +30,9 @@ def main():
    if l is not None:
     raw=np.array(l['plate_geometry']['object_corners_armor_m']);template=raw[physical_order(raw)];break
   if template is not None:break
+ if a.geometry:template=np.array(json.loads(Path(a.geometry).read_text())['object_points_armor_m'])
  if template is None:raise RuntimeError('no training geometry')
- dump(out/'geometry.json',{'schema':'armor-native.physical-corners/1','object_points_armor_m':template.tolist(),'order':['physical_left_bottom','physical_left_top','physical_right_top','physical_right_bottom'],'source':'first TRAIN asset annotation only; fixed across all splits','physical_armor_origin':True})
+ dump(out/'geometry.json',{'schema':'armor-native.physical-corners/1','object_points_armor_m':template.tolist(),'order':['physical_left_bottom','physical_left_top','physical_right_top','physical_right_bottom'],'source':'existing TRAIN-only template' if a.geometry else 'first TRAIN asset annotation only; fixed across all splits','physical_armor_origin':True})
  for r in frames:
   Rc=rotation(r['camera_quaternion_wxyz']);Rt=rotation(r['target_quaternion_wxyz']);cam=np.array(r['camera_position_world']);tp=np.array(r['target_position_world']);fx,fy,cx,cy=r['intrinsics'];K=np.array([[fx,0,cx],[0,fy,cy],[0,0,1]]);objs=[];statuses=[]
   for a in r['armors']:

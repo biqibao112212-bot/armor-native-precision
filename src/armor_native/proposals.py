@@ -22,7 +22,7 @@ class NativeProposer:
  def __init__(self,weights,config,device='cuda'):
   self.device=torch.device(device);self.model=ProposalNetwork(json.loads(Path(config).read_text())).to(self.device);self.model.load_state_dict(torch.load(weights,map_location='cpu',weights_only=True)['model']);self.model.eval()
  @torch.inference_mode()
- def __call__(self,image,threshold=.5):
+ def __call__(self,image,threshold=.5,include_geometry=False):
   if image.shape!=(1080,1440,3):raise ValueError('Validated proposal grid requires1440x1080 RGB; supply external centers for other image sizes')
   pp=[]
   for y in [0,336,632]:
@@ -33,7 +33,10 @@ class NativeProposer:
     if len(scores)>12:scores,ii=torch.topk(scores,12);indices=indices[ii]
     positions=indices.cpu().numpy();ss=scores.cpu().numpy();g=geo[0].float().cpu().numpy()
     for (iy,ix),score in zip(positions,ss):
-     v=g[:,iy,ix];fraction=1/(1+np.exp(-np.clip(v[:2],-30,30)));center=(np.array([ix,iy])+fraction)*4+[x,y];pp.append({'score':float(score),'center':center.tolist()})
+     v=g[:,iy,ix];fraction=1/(1+np.exp(-np.clip(v[:2],-30,30)));center=(np.array([ix,iy])+fraction)*4+[x,y];proposal={'score':float(score),'center':center.tolist()}
+     if include_geometry:
+      corners=v[2:10].reshape(4,2)*32+center;proposal.update(coarse_corners=corners.tolist(),extent_px=float(np.max(np.ptp(corners,axis=0))))
+     pp.append(proposal)
   kept=[]
   for p in sorted(pp,key=lambda p:p['score'],reverse=True):
    if all(np.linalg.norm(np.array(p['center'])-q['center'])>10 for q in kept):kept.append(p)
