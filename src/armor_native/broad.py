@@ -80,3 +80,11 @@ def coarse_context_loss(logits,corners,native_size):
  yy,xx=torch.meshgrid(torch.arange(8,device=logits.device)+.5,torch.arange(8,device=logits.device)+.5,indexing='ij');grid=torch.stack([xx,yy],-1)
  centers=corners.float()/native_size*8;distance=(grid[None,None]-centers[:,:,None,None]).square().sum(-1);target=torch.exp(-distance/(2*.75**2)).flatten(2);target=target/target.sum(-1,keepdim=True).clamp_min(1e-8)
  return -(target*F.log_softmax(logits.float().flatten(2),dim=-1)).sum(-1).mean()
+
+
+def load_localizer(weights,device='cuda'):
+ head=torch.load(weights,map_location='cpu',weights_only=False).get('head')
+ if head=='native_landmark_fusion':
+  from .landmark import LandmarkNativeLocalizer
+  return LandmarkNativeLocalizer(weights,device)
+ return BroadNativeLocalizer(weights,device)
