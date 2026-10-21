@@ -1,0 +1,20 @@
+{
+  "supersedes": "stage-plan.json fine structure-control stage",
+  "reason": "User now prioritizes roll0 only; execute one fixed whole-ROI-context fine candidate plus required coarse adaptation, with frozen old/SZU baselines; no extra architecture sweep",
+  "fine": {
+    "architecture": "global",
+    "steps": 4000,
+    "initial": "original validated native_roi_spatial.pt, not nonzero-roll experimental weights",
+    "seconds": 2700
+  },
+  "coarse": {
+    "steps": 1500,
+    "batch": 4,
+    "native_tile": 448,
+    "missing_slots": "ignored conservatively including all incomplete/unknown plate regions and other number3 labels; no RGB resize",
+    "seconds": 1800
+  },
+  "validation": "fixed final checkpoints; no selection on sealed or new confirmation",
+  "confirmation": "64new independent roll0 configurations512frames, all ranges/poses/height/light/motions proactively included",
+  "stop": "After training and fresh confirmation, save evidence; future5cm goal remains separate"
+}

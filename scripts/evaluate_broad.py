@@ -65,11 +65,11 @@ def score_frame(frame,predictions,physical):
  return rows
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--data',required=True);ap.add_argument('--checkpoint',required=True);ap.add_argument('--old',required=True);ap.add_argument('--output',required=True);ap.add_argument('--proposal-weights',required=True);ap.add_argument('--proposal-config',required=True);ap.add_argument('--seconds',type=int,default=1500);ap.add_argument('--consumer-source',help='optional historical SZU decoder source, private assets stay outside this repository');a=ap.parse_args();out=Path(a.output);out.mkdir(parents=True,exist_ok=False);root=Path(a.data);torch.set_num_threads(4);cv2.setNumThreads(1);ck=torch.load(a.checkpoint,map_location='cpu',weights_only=False);assert ck['updates']==4000;model=(NativeGlobalPrecision() if ck.get('head')=='global_bucket_physical' else NativeBucketPrecision()).cuda().eval();model.load_state_dict(ck['model']);old=RoiPrecision().cuda().eval();old.load_state_dict(torch.load(a.old,map_location='cpu',weights_only=False)['model']);template=ck['geometry'];K=np.array([[1303.675283386667,0,720],[0,1303.675283386667,540],[0,0,1]])
- plan={'scope':'sealed independent simulator episodes, number3, single-frame; oracle ROI and full image evaluation separated','candidate_sha256':sha(a.checkpoint),'old_sha256':sha(a.old),'proposal_sha256':sha(a.proposal_weights),'sealed_manifest_sha256':sha(root/'sealed.jsonl'),'source_sha256':sha(__file__),'threshold':.5,'matching':'Hungarian image center distance <=max(8px, .15*GT native extent); GT only used after inference','native_adaptive_route':'frozen coarse image-only predicted extent+40, smallest sufficient native bucket','rgb_resized':False,'selection':'fixed final4000, no test selection','roll_strata':'absolute camera roll 0-4,4-8,8-12deg; target roll reported separately','unknown_slots':'excluded from confirmed-negative and recall denominators; explicit audit retained'};dump(out/'plan.json',plan)
+ ap=argparse.ArgumentParser();ap.add_argument('--data',required=True);ap.add_argument('--checkpoint',required=True);ap.add_argument('--old',required=True);ap.add_argument('--output',required=True);ap.add_argument('--proposal-weights',required=True);ap.add_argument('--proposal-config',required=True);ap.add_argument('--old-proposal-weights',help='preserve complete old pipeline while adapting the new proposer');ap.add_argument('--seconds',type=int,default=1500);ap.add_argument('--consumer-source',help='optional historical SZU decoder source, private assets stay outside this repository');a=ap.parse_args();out=Path(a.output);out.mkdir(parents=True,exist_ok=False);root=Path(a.data);torch.set_num_threads(4);cv2.setNumThreads(1);ck=torch.load(a.checkpoint,map_location='cpu',weights_only=False);assert ck['updates']==4000;model=(NativeGlobalPrecision() if ck.get('head')=='global_bucket_physical' else NativeBucketPrecision()).cuda().eval();model.load_state_dict(ck['model']);old=RoiPrecision().cuda().eval();old.load_state_dict(torch.load(a.old,map_location='cpu',weights_only=False)['model']);template=ck['geometry'];K=np.array([[1303.675283386667,0,720],[0,1303.675283386667,540],[0,0,1]])
+ plan={'scope':'sealed independent simulator episodes, number3, single-frame; oracle ROI and full image evaluation separated','candidate_sha256':sha(a.checkpoint),'old_sha256':sha(a.old),'proposal_sha256':sha(a.proposal_weights),'old_proposal_sha256':sha(a.old_proposal_weights) if a.old_proposal_weights else sha(a.proposal_weights),'szu_frozen_scalar':1.04221015588693,'sealed_manifest_sha256':sha(root/'sealed.jsonl'),'source_sha256':sha(__file__),'threshold':.5,'matching':'Hungarian image center distance <=max(8px, .15*GT native extent); GT only used after inference','native_adaptive_route':'frozen coarse image-only predicted extent+40, smallest sufficient native bucket','rgb_resized':False,'selection':'fixed final4000, no test selection','roll_strata':'absolute camera roll 0-4,4-8,8-12deg; target roll reported separately','unknown_slots':'excluded from confirmed-negative and recall denominators; explicit audit retained'};dump(out/'plan.json',plan)
  from train_broad import diagnostic
  train_rows=[json.loads(l) for l in (root/'train.jsonl').open()];dump(out/'train-fit-final.json',diagnostic(model,train_rows,template,'cuda',seed=1042,n=192) if train_rows else {'not_applicable':'validation-only dataset'});model.eval()
- frames=[json.loads(l) for l in (root/'sealed.jsonl').open()];proposer=NativeProposer(a.proposal_weights,a.proposal_config);szu=None
+ frames=[json.loads(l) for l in (root/'sealed.jsonl').open()];proposer=NativeProposer(a.proposal_weights,a.proposal_config);old_proposer=NativeProposer(a.old_proposal_weights,a.proposal_config) if a.old_proposal_weights else None;szu=None
  if a.consumer_source:
   sys.path.insert(0,a.consumer_source);from diagnose_baselines import detector,MODEL
   import onnxruntime as ort
@@ -78,9 +78,12 @@ def main():
  with (out/'image-only-predictions.jsonl').open('x') as log:
   for i,r in enumerate(frames):
    if time.monotonic()-started>a.seconds:raise TimeoutError('bounded evaluation budget')
-   im=rgb(r['image_path']);torch.cuda.synchronize();t=time.perf_counter();pp=proposals_with_extent(proposer,im);t1=time.perf_counter();new=refine(model,im,pp,K,template,True);t2=time.perf_counter();legacy=refine(old,im,pp,K,template,False);t3=time.perf_counter();methods={'broad_native':new,'old128':legacy}
-   if szu is not None:methods['szu_native']=detector(szu,im,True)
-   torch.cuda.synchronize();t4=time.perf_counter();lat={'coarse_ms':(t1-t)*1000,'new_fine_ms':(t2-t1)*1000,'new_total_ms':(t2-t)*1000,'old_fine_ms':(t3-t2)*1000,'szu_ms':(t4-t3)*1000};times.append(lat)
+   im=rgb(r['image_path']);torch.cuda.synchronize();t=time.perf_counter();pp=proposals_with_extent(proposer,im);t1=time.perf_counter();new=refine(model,im,pp,K,template,True);t2=time.perf_counter();pp0=proposals_with_extent(old_proposer,im) if old_proposer else pp;t2a=time.perf_counter();legacy=refine(old,im,pp0,K,template,False);t3=time.perf_counter();methods={'broad_native':new,'old128':legacy}
+   if old_proposer:methods['new_fine_old_proposals']=refine(model,im,pp0,K,template,True)
+   t3a=time.perf_counter()
+   if szu is not None:
+    methods['szu_native']=detector(szu,im,True);methods['szu_frozen_scalar']=[dict(p,xyz=None if p['xyz'] is None else (np.array(p['xyz'])*1.04221015588693).tolist()) for p in methods['szu_native']]
+   torch.cuda.synchronize();t4=time.perf_counter();lat={'coarse_ms':(t1-t)*1000,'new_fine_ms':(t2-t1)*1000,'new_total_ms':(t2-t)*1000,'old_coarse_ms':((t2a-t2) if old_proposer else (t1-t))*1000,'old_fine_ms':(t3-t2a)*1000,'old_total_ms':((t3-t2) if old_proposer else ((t1-t)+(t3-t2a)))*1000,'new_fine_old_proposals_ms':(t3a-t3)*1000,'szu_ms':(t4-t3a)*1000};times.append(lat)
    # No labels are placed in this artifact; score only after its hash is sealed.
    log.write(json.dumps({'session':r['session'],'frame_seq':r['frame_seq'],'methods':methods,'latency_ms':lat})+'\n');log.flush()
    if i%64==0:print(json.dumps({'image_only_frames':i+1,'total':len(frames),'seconds':time.monotonic()-started}),flush=True)
@@ -88,7 +91,7 @@ def main():
  predictions=[json.loads(l) for l in (out/'image-only-predictions.jsonl').open()];scored=collections.defaultdict(list)
  for f,p in zip(frames,predictions):
   assert (f['session'],f['frame_seq'])==(p['session'],p['frame_seq'])
-  for method,pp in p['methods'].items():scored[method].extend(score_frame(f,pp,method=='broad_native'))
+  for method,pp in p['methods'].items():scored[method].extend(score_frame(f,pp,method in ['broad_native','new_fine_old_proposals']))
  # Separate GT-centered oracle diagnosis of the fine head: every test object,
  # same integer anchors, old128 retained, no detector coverage claim.
  oracle=collections.defaultdict(list)
@@ -106,5 +109,5 @@ def main():
   with (out/(scope+'-scored.jsonl')).open('x') as log:
    for name,rows in methods.items():
     for r in rows:log.write(json.dumps({'method':name,**r})+'\n')
- result={'complete':True,'frames':len(frames),'single_frame_only':True,'future_prediction_accepted':False,'image_only':{k:report(v) for k,v in scored.items()},'oracle_roi':{k:report(v) for k,v in oracle.items()},'latency_ms':{k:statistics([r[k] for r in times]) for k in times[0]},'seconds':time.monotonic()-started};dump(out/'result.json',result);print(json.dumps({'complete':True,'frames':len(frames),'output':str(out)}),flush=True)
+ result={'complete':True,'frames':len(frames),'single_frame_only':True,'future_prediction_accepted':False,'candidate_counts':{k:{'predictions_per_frame':statistics([len(p['methods'][k]) for p in predictions]),'total_predictions':sum(len(p['methods'][k]) for p in predictions),'outside_filtered_labels':sum(len(p['methods'][k]) for p in predictions)-sum(r['detected'] for r in v),'outside_is_not_confirmed_false_positive':True} for k,v in scored.items()},'image_only':{k:report(v) for k,v in scored.items()},'oracle_roi':{k:report(v) for k,v in oracle.items()},'latency_ms':{k:statistics([r[k] for r in times]) for k in times[0]},'seconds':time.monotonic()-started};dump(out/'result.json',result);print(json.dumps({'complete':True,'frames':len(frames),'output':str(out)}),flush=True)
 if __name__=='__main__':main()

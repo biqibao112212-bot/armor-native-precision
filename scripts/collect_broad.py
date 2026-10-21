@@ -47,7 +47,11 @@ def main():
      for i in range(spec['frames']):
       if shutil.disk_usage(out).free<20*2**30:raise RuntimeError('free space reserve reached')
       n=struct.unpack('<I',read_exact(proc.stdout,4,time.monotonic()+30))[0];assert 0<n<100000
-      row=json.loads(read_exact(proc.stdout,n,time.monotonic()+10));raw=read_exact(proc.stdout,6220800,time.monotonic()+20);rgba=np.frombuffer(raw,np.uint8).reshape(1080,1440,4);assert (rgba[:,:,3]==255).all();bgr=rgba[:,:,:3][:,:,::-1].copy();name=f'{i:03d}.png';assert cv2.imwrite(str(d/name),bgr,[cv2.IMWRITE_PNG_COMPRESSION,2]);assert np.array_equal(cv2.imread(str(d/name)),bgr)
+      row=json.loads(read_exact(proc.stdout,n,time.monotonic()+10))
+      if p.get('roll_fixed_zero'):
+       from scipy.spatial.transform import Rotation
+       rc=Rotation.from_quat(np.array(row['camera_quaternion_wxyz'])[[1,2,3,0]]).as_matrix();cfg=spec['config'];forward=np.array(cfg['camera_look_at_world_m'])-cfg['camera_position_world_m'];forward/=np.linalg.norm(forward);left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left);up=np.cross(forward,left);camera_roll=float(np.rad2deg(np.arctan2(rc[:,1]@up,rc[:,1]@left)));target_roll=float(Rotation.from_quat(np.array(row['target_quaternion_wxyz'])[[1,2,3,0]]).as_euler('ZYX',degrees=True)[-1]);assert abs(camera_roll)<.01 and abs(target_roll)<.01,(camera_roll,target_roll);row.update(actual_camera_roll_deg=camera_roll,actual_target_roll_deg=target_roll,requested_roll_zero_verified=True)
+      raw=read_exact(proc.stdout,6220800,time.monotonic()+20);rgba=np.frombuffer(raw,np.uint8).reshape(1080,1440,4);assert (rgba[:,:,3]==255).all();bgr=rgba[:,:,:3][:,:,::-1].copy();name=f'{i:03d}.png';assert cv2.imwrite(str(d/name),bgr,[cv2.IMWRITE_PNG_COMPRESSION,2]);assert np.array_equal(cv2.imread(str(d/name)),bgr)
       row.update(image_path=str((d/name).relative_to(out)),split=spec['split'],light=spec['light'],mode=spec['mode'],configured_range_bin=spec['range_bin'],rgb_sha256=hashlib.sha256(rgba[:,:,:3].tobytes()).hexdigest());ledger.write(json.dumps(row)+'\n');ledger.flush();total+=(d/name).stat().st_size
       if total>p['caps']['maximum_new_bytes']:raise RuntimeError('native image byte budget')
      code=proc.wait(timeout=10)
