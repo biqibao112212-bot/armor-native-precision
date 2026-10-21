@@ -27,8 +27,8 @@ def read_exact(pipe,n,deadline):
   chunks.append(x);n-=len(x)
  return b''.join(chunks)
 def main():
- a=argparse.ArgumentParser();a.add_argument('--workspace',required=True);a.add_argument('--output',required=True);a.add_argument('--sdk-root',required=True);args=a.parse_args();W=Path(args.workspace);out=Path(args.output);out.mkdir(exist_ok=False,parents=True);p=plan();dump(out/'plan.json',p);(out/'episodes').mkdir();(out/'ipc').mkdir()
- source=Path(__file__).with_name('capture_broad.cpp');binary=out/'capture-broad';cmd=['c++','-std=c++17','-O2','-pthread','-I'+str(Path(args.sdk_root)/'include'),str(source),str(Path(args.sdk_root)/'lib/libdaedalus_sim_sdk.a'),'-o',str(binary)];dump(out/'build-command.json',cmd);subprocess.run(cmd,check=True,timeout=90)
+ a=argparse.ArgumentParser();a.add_argument('--workspace',required=True);a.add_argument('--output',required=True);a.add_argument('--sdk-root',required=True);a.add_argument('--capture-source');a.add_argument('--cpp-standard',default='c++17');args=a.parse_args();W=Path(args.workspace);out=Path(args.output);out.mkdir(exist_ok=False,parents=True);p=plan();dump(out/'plan.json',p);(out/'episodes').mkdir();(out/'ipc').mkdir()
+ source=Path(args.capture_source) if args.capture_source else Path(__file__).with_name('capture_broad.cpp');binary=out/'capture-broad';cmd=['c++','-std='+args.cpp_standard,'-O2','-pthread','-I'+str(Path(args.sdk_root)/'include'),str(source),str(Path(args.sdk_root)/'lib/libdaedalus_sim_sdk.a'),'-o',str(binary)];dump(out/'build-command.json',cmd);subprocess.run(cmd,check=True,timeout=90)
  env=os.environ.copy();env.update(TALOS_IPC_DIR=str(out/'ipc'),DAEDALUS_CORNER_LABELS_JSONL=str(out/'exact-corners.jsonl'))
  log=(out/'simulator.log').open('x');sim=subprocess.Popen([str(W/'tools/start-simulator-headless')],env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True);dump(out/'job.json',{'pid':os.getpid(),'simulator_pid':sim.pid,'started_unix':time.time(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()});started=time.monotonic();total=0
  try:
@@ -45,7 +45,7 @@ def main():
     proc=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=clog,bufsize=0);dump(d/'execution.json',{'command':command,'pid':proc.pid})
     try:
      for i in range(spec['frames']):
-      if shutil.disk_usage(out).free<20*2**30:raise RuntimeError('free space reserve reached')
+      if shutil.disk_usage(out).free<p['caps']['minimum_free_bytes']:raise RuntimeError('free space reserve reached')
       n=struct.unpack('<I',read_exact(proc.stdout,4,time.monotonic()+30))[0];assert 0<n<100000
       row=json.loads(read_exact(proc.stdout,n,time.monotonic()+10))
       if p.get('roll_fixed_zero'):

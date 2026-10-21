@@ -30,24 +30,11 @@ def refine(model,image,proposals,K,template,adaptive):
   patch,origin,_=crop_native(image,p['center'],size);x=torch.from_numpy(patch.transpose(2,0,1).copy())[None].float().cuda()/255
   with torch.autocast('cuda',dtype=torch.float16):pred=model(x)
   corners=model.points(pred).cpu().numpy()[0]+origin;pose=solve_physical(corners,K,template) if adaptive else solve_geometry(corners,K)
-  result.append({'center':np.mean(corners,0).tolist(),'proposal_center':p['center'],'score':p['score'],'corners':corners.tolist(),'xyz':None if pose is None else pose['xyz_m'],'native_size':size})
+  result.append({'center':p['center'],'proposal_center':p['center'],'score':p['score'],'corners':corners.tolist(),'xyz':None if pose is None else pose['xyz_m'],'native_size':size})
  return result
 @torch.inference_mode()
 def proposals_with_extent(proposer,image):
- pp=[]
- for y in [0,336,632]:
-  for x in [0,336,672,992]:
-   tile=image[y:y+448,x:x+448];t=torch.from_numpy(tile.transpose(2,0,1).copy())[None].float().cuda()/255
-   with torch.autocast('cuda',dtype=torch.float16):hm,geo=proposer.model(t)
-   prob=hm.float().sigmoid();peaks=(prob==F.max_pool2d(prob,3,1,1))&(prob>.5);idx=peaks[0,0].nonzero();scores=prob[0,0][peaks[0,0]]
-   if len(scores)>12:scores,ii=torch.topk(scores,12);idx=idx[ii]
-   g=geo[0].float().cpu().numpy()
-   for (iy,ix),score in zip(idx.cpu().numpy(),scores.cpu().numpy()):
-    v=g[:,iy,ix];center=(np.array([ix,iy])+1/(1+np.exp(-np.clip(v[:2],-30,30))))*4+[x,y];c=v[2:10].reshape(4,2)*32+center;pp.append({'score':float(score),'center':center.tolist(),'extent_px':float(np.max(np.ptp(c,axis=0)))})
- kept=[]
- for p in sorted(pp,key=lambda x:x['score'],reverse=True):
-  if all(np.linalg.norm(np.array(p['center'])-q['center'])>10 for q in kept):kept.append(p)
- return kept
+ return proposer(image,include_geometry=True)
 
 def score_frame(frame,predictions,physical):
  gt=frame['objects'];pairs={}
@@ -65,11 +52,11 @@ def score_frame(frame,predictions,physical):
  return rows
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--data',required=True);ap.add_argument('--checkpoint',required=True);ap.add_argument('--old',required=True);ap.add_argument('--output',required=True);ap.add_argument('--proposal-weights',required=True);ap.add_argument('--proposal-config',required=True);ap.add_argument('--old-proposal-weights',help='preserve complete old pipeline while adapting the new proposer');ap.add_argument('--seconds',type=int,default=1500);ap.add_argument('--consumer-source',help='optional historical SZU decoder source, private assets stay outside this repository');a=ap.parse_args();out=Path(a.output);out.mkdir(parents=True,exist_ok=False);root=Path(a.data);torch.set_num_threads(4);cv2.setNumThreads(1);ck=torch.load(a.checkpoint,map_location='cpu',weights_only=False);assert ck['updates']==4000;model=(NativeGlobalPrecision() if ck.get('head')=='global_bucket_physical' else NativeBucketPrecision()).cuda().eval();model.load_state_dict(ck['model']);old=RoiPrecision().cuda().eval();old.load_state_dict(torch.load(a.old,map_location='cpu',weights_only=False)['model']);template=ck['geometry'];K=np.array([[1303.675283386667,0,720],[0,1303.675283386667,540],[0,0,1]])
- plan={'scope':'sealed independent simulator episodes, number3, single-frame; oracle ROI and full image evaluation separated','candidate_sha256':sha(a.checkpoint),'old_sha256':sha(a.old),'proposal_sha256':sha(a.proposal_weights),'old_proposal_sha256':sha(a.old_proposal_weights) if a.old_proposal_weights else sha(a.proposal_weights),'szu_frozen_scalar':1.04221015588693,'sealed_manifest_sha256':sha(root/'sealed.jsonl'),'source_sha256':sha(__file__),'threshold':.5,'matching':'Hungarian image center distance <=max(8px, .15*GT native extent); GT only used after inference','native_adaptive_route':'frozen coarse image-only predicted extent+40, smallest sufficient native bucket','rgb_resized':False,'selection':'fixed final4000, no test selection','roll_strata':'absolute camera roll 0-4,4-8,8-12deg; target roll reported separately','unknown_slots':'excluded from confirmed-negative and recall denominators; explicit audit retained'};dump(out/'plan.json',plan)
+ ap=argparse.ArgumentParser();ap.add_argument('--data',required=True);ap.add_argument('--checkpoint',required=True);ap.add_argument('--old',required=True);ap.add_argument('--output',required=True);ap.add_argument('--proposal-weights',required=True);ap.add_argument('--proposal-config',required=True);ap.add_argument('--proposal-mode',choices=['tiles448','full_native'],default='tiles448');ap.add_argument('--old-proposal-weights',help='preserve complete old pipeline while adapting the new proposer');ap.add_argument('--seconds',type=int,default=1500);ap.add_argument('--consumer-source',help='optional historical SZU decoder source, private assets stay outside this repository');a=ap.parse_args();out=Path(a.output);out.mkdir(parents=True,exist_ok=False);root=Path(a.data);torch.set_num_threads(4);cv2.setNumThreads(1);ck=torch.load(a.checkpoint,map_location='cpu',weights_only=False);assert ck['updates']==ck.get('config',{}).get('steps',4000);model=(NativeGlobalPrecision() if ck.get('head')=='global_bucket_physical' else NativeBucketPrecision()).cuda().eval();model.load_state_dict(ck['model']);old=RoiPrecision().cuda().eval();old.load_state_dict(torch.load(a.old,map_location='cpu',weights_only=False)['model']);template=ck['geometry'];K=np.array([[1303.675283386667,0,720],[0,1303.675283386667,540],[0,0,1]])
+ plan={'scope':'sealed independent simulator episodes, number3, single-frame; oracle ROI and full image evaluation separated','candidate_sha256':sha(a.checkpoint),'old_sha256':sha(a.old),'proposal_sha256':sha(a.proposal_weights),'proposal_mode':a.proposal_mode,'old_proposal_sha256':sha(a.old_proposal_weights) if a.old_proposal_weights else sha(a.proposal_weights),'szu_frozen_scalar':1.04221015588693,'sealed_manifest_sha256':sha(root/'sealed.jsonl'),'source_sha256':sha(__file__),'threshold':.5,'matching':'Hungarian image center distance <=max(8px, .15*GT native extent); GT only used after inference','native_adaptive_route':'frozen coarse image-only predicted extent+40, smallest sufficient native bucket','rgb_resized':False,'selection':'fixed completed final training checkpoint, no test selection','roll_strata':'absolute camera roll 0-4,4-8,8-12deg; target roll reported separately','unknown_slots':'excluded from confirmed-negative and recall denominators; explicit audit retained'};dump(out/'plan.json',plan)
  from train_broad import diagnostic
  train_rows=[json.loads(l) for l in (root/'train.jsonl').open()];dump(out/'train-fit-final.json',diagnostic(model,train_rows,template,'cuda',seed=1042,n=192) if train_rows else {'not_applicable':'validation-only dataset'});model.eval()
- frames=[json.loads(l) for l in (root/'sealed.jsonl').open()];proposer=NativeProposer(a.proposal_weights,a.proposal_config);old_proposer=NativeProposer(a.old_proposal_weights,a.proposal_config) if a.old_proposal_weights else None;szu=None
+ frames=[json.loads(l) for l in (root/'sealed.jsonl').open()];proposer=NativeProposer(a.proposal_weights,a.proposal_config,mode=a.proposal_mode);old_proposer=NativeProposer(a.old_proposal_weights,a.proposal_config) if a.old_proposal_weights else None;szu=None
  if a.consumer_source:
   sys.path.insert(0,a.consumer_source);from diagnose_baselines import detector,MODEL
   import onnxruntime as ort
