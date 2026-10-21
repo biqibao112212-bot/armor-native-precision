@@ -11,7 +11,7 @@
 | 固定XY坐标通道 | 实际向RGB附加归一化ROI坐标，不含目标真值 | [5] |
 | GroupNorm与AdamW | 直接使用PyTorch的GroupNorm、AdamW实现 | [6][7] |
 | 平面四点位姿 | 直接调用OpenCV SOLVEPNP_IPPE，角点与相机内参采用相同坐标定义 | [8] |
-| 冻结候选检测器 | 实际使用Ultralytics8.3.0的YOLO11n-pose特征定义与预训练来源，增加本项目中心/几何头，仅保留中心作为ROI提议 | [9] |
+| 冻结候选检测器 | 实际使用Ultralytics8.3.0的YOLO11n-pose特征定义与预训练来源，增加本项目中心/几何头，旧版仅保留中心；零roll扩展版还用粗角点定位四个原生裁块 | [9] |
 
 1. Hei Law, Jia Deng. **CornerNet: Detecting Objects as Paired Keypoints.** ECCV2018. [论文](https://arxiv.org/abs/1808.01244)。
 2. Xingyi Zhou, Dequan Wang, Philipp Krähenbühl. **Objects as Points.** arXiv2019. [论文](https://arxiv.org/abs/1904.07850)；[官方loss实现](https://github.com/xingyizhou/CenterNet/blob/master/src/lib/models/losses.py)。本项目修正focal的正负幂次2/4与该表示对应，偏移头细节不同。
@@ -24,3 +24,9 @@
 9. Ultralytics. **Ultralytics YOLO**, version8.3.0. [官方仓库](https://github.com/ultralytics/ultralytics)。本项目附带来源配置与完整对应许可文本。
 
 仅有相似的设计思想不证明复现了整套方法，也不表示这些论文的公开benchmark等同本项目精度。当前结论来自本项目冻结对照与新会话，证据见EVALUATION.md。
+
+## 零 roll 扩展版的实际变化
+
+新版本保留热图与局部偏移的表示，采用每个语义角点一块原生128裁块，共四块，并训练一个独立角点分支。原报告整板128分支冻结，在预测中心附近五个整数裁块上平均结果，按视图一致性、图像证据及与新分支的逐角一致性条件选择；精定位后按对应角点距离抑制重复输出。全图粗检测仍使用YOLO特征和本项目中心/几何头，输入1440×1080只补底部8行，未缩放RGB；并不是完全不用YOLO。新增部分是本项目实现，不声称来自某篇完整网络复现。
+
+PnP使用r3实际物理点模板与固定标定内参，无直接学习深度头，也未使用Metric3D。深度精度来自角点、物理尺寸与几何解算；深度通用预训练模型没有在本版提供可证明更好的融合结果。双灯条支持规则仅为模拟器图像证据代理，实际代码见src/armor_native/observability.py；线上使用预测角点，离线总体定义使用真值灯条位置，二者不可混用。训练链见TRAINING_ROLL0.md。
