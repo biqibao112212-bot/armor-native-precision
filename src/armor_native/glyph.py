@@ -105,7 +105,12 @@ def glyph_crop_size(coarse,K,template):
 
 class GlyphLocalizer:
     supports_camera_attitude=True
-    def __init__(self,weights,device='cuda'):
+    def __init__(self,weights,device='cuda',geometry_backend='scipy',native_library=None):
+        if geometry_backend not in {'scipy','native-trf'}:raise ValueError(geometry_backend)
+        self.geometry_backend=geometry_backend;self.native_geometry=None
+        if geometry_backend=='native-trf':
+            from .native_geometry import NativeGeometry
+            self.native_geometry=NativeGeometry(native_library)
         ck=torch.load(weights,map_location='cpu',weights_only=False);assert ck['head']=='native_glyph_geometry'
         self.device=torch.device(device);self.template=ck['geometry'];self.glyph_template=ck['glyph_geometry']['object_points'];self.config=ck['inference_config'];self.proposal_threshold=self.config['proposal_threshold'];self.mode=self.config.get('decoder','glyph_level')
         self.model=NativeGlyphPrecision(len(self.glyph_template),tuple(ck['config']['context_dilations'])).to(self.device).eval();self.model.load_state_dict(ck['model'])
@@ -115,6 +120,8 @@ class GlyphLocalizer:
         self.fallback=QuadLocalizer(str(fallback),device)
     @torch.inference_mode()
     def __call__(self,image,proposals,K,camera_quaternion_wxyz=None):
+        pose_solver=fit_glyph_pose if self.native_geometry is None else self.native_geometry.fit_glyph_pose
+        evidence_reader=lamp_evidence if self.native_geometry is None else self.native_geometry.lamp_evidence
         results=[];groups={};large=[]
         for p in proposals:
             size=glyph_crop_size(p['coarse_corners'],K,self.glyph_template)
@@ -127,11 +134,11 @@ class GlyphLocalizer:
                 with torch.autocast('cuda',dtype=torch.float16,enabled=self.device.type=='cuda'):pred=self.model(x)
                 local=pred['corners'].cpu().numpy();peaks=pred['heatmap'].float().sigmoid().flatten(2).max(-1).values.cpu().numpy()
                 for (p,patch,origin),points,confidence in zip(block,local,peaks):
-                    points=points+origin;pose=fit_glyph_pose(points,confidence,K,self.glyph_template,camera_quaternion_wxyz,self.mode)
+                    points=points+origin;pose=pose_solver(points,confidence,K,self.glyph_template,camera_quaternion_wxyz,self.mode)
                     source=self.mode
                     if pose is None and min(confidence[:4])>=.1:
-                        pose=fit_glyph_pose(points,confidence,K,self.glyph_template,None,'direct');source='direct_fallback'
-                    corners=np.asarray(pose['corners'] if pose is not None else points[:4]);evidence=lamp_evidence(image,corners,rule=self.config['observability_rule'])
+                        pose=pose_solver(points,confidence,K,self.glyph_template,None,'direct');source='direct_fallback'
+                    corners=np.asarray(pose['corners'] if pose is not None else points[:4]);evidence=evidence_reader(image,corners,rule=self.config['observability_rule'])
                     boundary=bool((corners<0).any() or (corners[:,0]>=image.shape[1]).any() or (corners[:,1]>=image.shape[0]).any())
                     accepted=pose is not None and evidence['accepted'] and not boundary
                     if self.mode in {'direct','lamp_level'}:accepted=accepted and min(confidence[:4])>=.1

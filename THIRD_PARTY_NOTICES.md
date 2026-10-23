@@ -19,3 +19,7 @@
 PyTorch、NumPy、OpenCV、ONNX/ONNX Runtime等通过环境安装，各依赖按自身许可使用，未将库二进制复制入仓库。IPPE通过OpenCV调用，来源见METHODS.md。
 
 结果中的11维EKF来自源仓库维护的TongjiSuperPower/sp_vision_25适配（MIT），本模型仓库没有重新分发其C++源码。模拟器Release/SDK与SZU0526基线也未在这里重新分发；结果文件中的路径和哈希只是证据定位。
+
+## SciPy TRF 算法移植
+
+可选原生几何后端将 SciPy 1.14.1 的有界 trust-region reflective、soft-L1 鲁棒最小二乘流程移植为 C++/Eigen，并使用本项目平面姿态的解析雅可比。相关代码为 src/armor_native/native/glyph_trf.cpp；SciPy BSD-3-Clause 版权与许可全文保留在同目录 SCIPY_LICENSE.txt。默认后端仍为 SciPy；Eigen 由使用者在目标机器安装，不随仓库分发二进制。

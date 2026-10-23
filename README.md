@@ -36,3 +36,10 @@
 旧版权重保留于 weights/number3-roll0-v2/，历史指标见[EVALUATION.md](EVALUATION.md)，旧版说明见[MODEL_CARD.md](MODEL_CARD.md)。原始图像与完整受保护资产保留在训练服务器；本次没有本地全量备份，也没有生成PDF报告。
 
 许可AGPL-3.0，第三方来源见[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+
+## FP16实时推理候选 v0.4.0-rc1
+
+新增可重建的TensorRT/CUDA Graph运行时及轻量原生粗定位/大ROI精定位。原确认集1536帧回归：3–5m420/423，角点/深度/横向P95为0.1492px/3.893cm/0.853cm；T4整帧中位7.20ms、P959.05ms，最大11.49ms。仍有23/1536帧超过10ms，尚无Orin NX实测；作为候选版保留这些限制。
+
+[部署与限制](docs/runtime-fp16.md) · [完整统计](evaluations/runtime-fp16/summary.json) · [模型、ONNX及T4引擎候选包](https://github.com/biqibao112212-bot/armor-native-precision/releases/tag/v0.4.0-rc1)
