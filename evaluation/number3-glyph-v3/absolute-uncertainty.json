@@ -1,0 +1,37 @@
+{
+  "method": "whole-session bootstrap, all eligible rows retained; post-confirmation uncertainty only",
+  "sessions": 105,
+  "draws": 2000,
+  "intervals95": {
+    "coverage": [
+      0.9926461532889018,
+      1.0
+    ],
+    "corner_rms_px": [
+      0.13955006419991367,
+      0.16747681373421824
+    ],
+    "depth_mm": [
+      33.75253691983852,
+      40.40094385974413
+    ],
+    "xy_mm": [
+      7.425401909748118,
+      9.5798346504266
+    ]
+  },
+  "near_height": {
+    "0-.15m": {
+      "eligible": 117,
+      "valid": 117
+    },
+    ".15-.3m": {
+      "eligible": 75,
+      "valid": 68
+    },
+    ".3-.4m": {
+      "eligible": 36,
+      "valid": 28
+    }
+  }
+}
