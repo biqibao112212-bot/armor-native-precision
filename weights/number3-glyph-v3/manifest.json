@@ -1,0 +1,81 @@
+{
+  "schema": "armor-native.glyph-public-resources/1",
+  "candidate_file": "glyph_native.pt",
+  "training_file": "glyph_training_032000.pt",
+  "training_metadata_paths_sanitized": true,
+  "training_model_optimizer_tensors_identical": true,
+  "inference_source_commit": "8fcabea47ab4265581ef7441586f7c903d27dd7d",
+  "training_source_commit": "ec6d299d6e8534235df7861ef8c632ea61f3ea52",
+  "files": {
+    "glyph_training_032000.pt": {
+      "bytes": 1355874,
+      "sha256": "42bb866d45b0fd84a1091695708682a6bef69ec54a0201bd17b7bf4955262500"
+    },
+    "glyph-geometry.json": {
+      "bytes": 13381,
+      "sha256": "1c7fbef14ce78f84d42fee91cc0fd15414b7f5a3ab562bb05fd981be374e71af"
+    },
+    "LICENSE": {
+      "bytes": 34523,
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    },
+    "proposal_native.pt": {
+      "bytes": 12183504,
+      "sha256": "5b021e390d3e4f932368d57da65d41dc9944c6abc831c85a4f70982e94d0dda5"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 1668,
+      "sha256": "bef658902cd563f93025127d657503ed0f3b555534eef2331fb52bfc0aeba294"
+    },
+    "proposal_yolo11n_pose.json": {
+      "bytes": 2773,
+      "sha256": "a1f5cc909ff424ac6fde802d204dc7b2de9f34da0342830cc94fac4d65ef694b"
+    },
+    "glyph_native.pt": {
+      "bytes": 596168,
+      "sha256": "942ea92547e6f9d9554a8c249c819c8fc5fe0d532b57ac1a9c7e1348f7a43c54"
+    },
+    "initial_plate.pt": {
+      "bytes": 582171,
+      "sha256": "5d42a982d395a49fbd99d175f8698cb166ededf195f77434255706ff42488fd0"
+    },
+    "LICENSE.md": {
+      "bytes": 370,
+      "sha256": "87db786ec7c4f07cc251ae78cf395dbaaf6d34caa97268b237edc22549ddd1c6"
+    },
+    "quad_large_fallback.pt": {
+      "bytes": 769341,
+      "sha256": "5633eb3a3f65e096bb7492de28d92a32ef4e5823d9b435b8214037a29f0053ab"
+    },
+    "model-contract.json": {
+      "bytes": 2672,
+      "sha256": "224514d5f10279597318d1202775b6e1afe969d5a9f347f182ca45196d73ab48"
+    }
+  },
+  "inference_source_files": {
+    "src/armor_native/glyph.py": "1b16ce290d8f12f7e1d7c3c93b21c6af26c26c53243c3de97bc76d78136b9f08",
+    "src/armor_native/observability.py": "a0efc1bd14dced6c44d7b5675b981eaf995a76eb955fcd58b3895fba7459bff5",
+    "src/armor_native/quad.py": "552bb8b3b9f6ebe8d3d3f7c94504ccdf923136c1d53c1207b8e1b3fb38c0d67f",
+    "src/armor_native/model.py": "199728c41acdd861199ebbf7544eea2869975fd60350f323281e4f9df8951c9d",
+    "src/armor_native/geometry.py": "38cb95ae318831a52e2f425096f48c67598b1df9afa5b2dbeeb20682112f2b73",
+    "src/armor_native/broad.py": "65a229396f887ec9f8f23d98412e7b7e29e4db5ffa0334947f2f8e6e6766c9ca",
+    "src/armor_native/matching.py": "d1273c8df3438e86d022f3d9decf757850de8216d9922e1193311d05e5fe6931",
+    "src/armor_native/glyph_quality.py": "9285d9d2686bdbf8601a9fb8f097720bef5f63e87995996a1cc7fee097cce37c",
+    "src/armor_native/height_scope.py": "20594d44840600f24ebd252b01519995949c82e0085b13b48f645c38006b3e9d",
+    "src/armor_native/export.py": "4091b30ca6712d6f60d1a7dec45ae3aca6b8ae578f3f43019694e3beb9f72816",
+    "src/armor_native/sampling.py": "d1aefc3334f12875680b46fdc828e12397d432c93bd83b9747ed5c2949272c2e",
+    "src/armor_native/lamp_topology.py": "57b21d75c8a9ef66072994ff9ad0f3c5bc015c274b06f80ffaf3919180992ee0",
+    "src/armor_native/residual.py": "d26a5797c7b7c859798112d23f7600cbae756ce9b5fb0fc3570bb6b76242d7a2",
+    "src/armor_native/train.py": "de92483d29c0bab7fa9ca98199949a021b32edff61e72af61e7ed9c58c3f8943",
+    "src/armor_native/plate_context.py": "3d1dfd3c4bc3baa4d9806f1bb8b60d529e65903d91f6a43ee3a3b3e74bac466c",
+    "src/armor_native/infer.py": "88496d299df7ea5ab1bbf719a89e89af78a4e384ea9efc2975fdef99739ec114",
+    "src/armor_native/__init__.py": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
+    "src/armor_native/plate.py": "778a7b9879670d74fc7f687deb10c0a9f96dda44a79f6d24fe6583f2fda8aa0b",
+    "src/armor_native/proposals.py": "724a7827f6074b77c6a561b775f5ee1612e1ade222646a31ccf103b3ef4997bd",
+    "src/armor_native/data.py": "fda7a01a162e4f18ab06546b8723f6f1d311fcdbbb67d24dbd852ed7400d8ace",
+    "src/armor_native/dense_vote.py": "f8ea4efa2fef9db3c5cd884bba5befe9b904f4571cd375427ba3e31512b170c3",
+    "src/armor_native/landmark.py": "e41fbf4814e92d5b9d7092c917e78f0b82a05e8b88f9829b58f6c2ef84a6cbfb",
+    "src/armor_native/level_pose.py": "3855914df556d37eee92aa5e44b363cf0653b39e9b0bbee67f8b83ae820af24f",
+    "src/armor_native/widen.py": "f6ff9b637e0728eb540ecbcf1c583beafdc358286033856b3eb9cbafd79cecf2"
+  }
+}

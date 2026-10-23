@@ -18,7 +18,9 @@ def main():
   for r in new:
    r['image_path']=str((data_root/r['image_path']).resolve());spec=json.loads((data_root/'episodes'/r['session']/'spec.json').read_text());r['camera_roll_deg']=spec['config']['camera_roll_deg'];r['target_roll_deg']=spec['config']['target_rpy_deg'][0];r['target_pitch_deg']=spec['config']['target_rpy_deg'][1]
   frames.extend(new);wanted={tuple(r[k] for k in ['producer_epoch','frame_seq','timestamp_ns','target_id']) for r in new};exposures={key[:3]:key[3] for key in wanted}
-  for line in (data_root/'exact-corners.jsonl').open():
+  label_source=data_root/'label-source.json'
+  label_path=Path(json.loads(label_source.read_text())['path']) if label_source.exists() else data_root/'exact-corners.jsonl'
+  for line in label_path.open():
    l=json.loads(line);key=tuple(l[k] for k in ['producer_epoch','frame_seq','timestamp_ns','target_id'])
    if key in wanted:labels[key+(l['relative_slot'],)]=l
    elif key[:3] in exposures and l['target_number']==3:other_quads.setdefault(key[:3],[]).append(l['exact_corners_px'])

@@ -1,0 +1,24 @@
+{
+  "intrinsics": [
+    1303.675283386667,
+    1303.675283386667,
+    720,
+    540
+  ],
+  "camera_quaternion_wxyz": [
+    0.1354428231716156,
+    -0.036840856075286865,
+    0.005039811134338379,
+    0.9900871515274048
+  ],
+  "camera_link_axes": "forward, left, up",
+  "image_shape": [
+    1080,
+    1440,
+    3
+  ],
+  "source": "first normal-light 3-5m frame in pre-existing fresh DEV, not selected by model error",
+  "session": "height40-development-v00-b3-l1-m2",
+  "frame_seq": 10431,
+  "target_truth_not_required_for_inference": true
+}

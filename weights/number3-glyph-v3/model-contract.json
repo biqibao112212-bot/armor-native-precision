@@ -1,0 +1,83 @@
+{
+  "schema": "armor-native.glyph-bundle/1",
+  "source_commit": "8fcabea47ab4265581ef7441586f7c903d27dd7d",
+  "assets": {
+    "glyph_native.pt": {
+      "file": "glyph_native.pt",
+      "sha256": "942ea92547e6f9d9554a8c249c819c8fc5fe0d532b57ac1a9c7e1348f7a43c54",
+      "bytes": 596168,
+      "source_sha256": "3c546bcd36e62f9a354613ad535f614e210721ee203018ad7ab80d94f23e1d7c",
+      "tensors_identical": true
+    },
+    "quad_large_fallback.pt": {
+      "file": "quad_large_fallback.pt",
+      "sha256": "5633eb3a3f65e096bb7492de28d92a32ef4e5823d9b435b8214037a29f0053ab",
+      "bytes": 769341,
+      "source_sha256": "9f46a20a9c04c49ee30729ab83cb31c2bb963dc97802c04b7443726d0b060b30",
+      "tensors_identical": true
+    },
+    "proposal_native.pt": {
+      "file": "proposal_native.pt",
+      "sha256": "5b021e390d3e4f932368d57da65d41dc9944c6abc831c85a4f70982e94d0dda5",
+      "bytes": 12183504,
+      "source_sha256": "fb3f2ddd105bddd297503cfaa74d20eeefae5996d6c91802f0e5095828633935",
+      "tensors_identical": true
+    },
+    "proposal_yolo11n_pose.json": {
+      "file": "proposal_yolo11n_pose.json",
+      "sha256": "a1f5cc909ff424ac6fde802d204dc7b2de9f34da0342830cc94fac4d65ef694b"
+    }
+  },
+  "input_rgb_shape": [
+    1080,
+    1440,
+    3
+  ],
+  "rgb_resized": false,
+  "coarse_mode": "full_native",
+  "fine_native_buckets": [
+    128,
+    192,
+    256,
+    384,
+    512
+  ],
+  "larger_targets": "included native four-crop fallback",
+  "target_number": 3,
+  "decoder": "glyph_level",
+  "required_camera_inputs": [
+    "fx",
+    "fy",
+    "cx",
+    "cy",
+    "same-exposure quaternion wxyz, camera-link to world"
+  ],
+  "camera_link_axes": "x forward, y left, z up",
+  "optical_axes": "x right, y down, z forward",
+  "target_assumptions": {
+    "world_roll_deg": 0,
+    "world_pitch_deg": 0,
+    "fixed_armor_mount_pitch_deg": 15
+  },
+  "corner_order": [
+    "physical_left_bottom",
+    "physical_left_top",
+    "physical_right_top",
+    "physical_right_bottom"
+  ],
+  "corners": "joint-pose reprojections of physical lamp endpoints; raw16 landmarks also returned",
+  "translation": "armor origin in optical camera coordinates, meters",
+  "frame_evidence_rule": {
+    "version": "two-lamp-cyan-v2",
+    "chroma_min": 35,
+    "peak_min": 80,
+    "support_min": 0.65,
+    "minimum_length_px": 4.0,
+    "minimum_separation_px": 3.0,
+    "cyan_green_tolerance": 10
+  },
+  "inference_precision": "PyTorch CUDA FP16 autocast; checkpoint tensors FP32; CPU FP32 supported",
+  "tensorrt_or_nx_10ms_verified": false,
+  "real_camera_or_other_numbers_verified": false,
+  "accuracy": "see separately sealed recognition confirmation; packaging does not establish accuracy"
+}

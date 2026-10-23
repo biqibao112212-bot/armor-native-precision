@@ -18,10 +18,38 @@ class ProposalNetwork(nn.Module):
    z=m(z);cache.append(z if m.i in self.backbone.save else None)
   feat=F.interpolate(self.project(cache[self.feature_index]),size=(h//4,w//4),mode='bilinear',align_corners=False);h=self.shared(torch.cat([feat,self.rgb(x)],1));return self.center(h),self.geo(h)
 
+def use_frame_statistics(module):
+ """Use independent current-image statistics; no mutable running estimates."""
+ count=0
+ for name,child in list(module.named_children()):
+  if isinstance(child,nn.BatchNorm2d):
+   replacement=nn.InstanceNorm2d(child.num_features,eps=child.eps,affine=child.affine,track_running_stats=False)
+   if child.affine:
+    replacement.weight=child.weight
+    replacement.bias=child.bias
+   replacement.train(child.training)
+   setattr(module,name,replacement)
+   count+=1
+  else:count+=use_frame_statistics(child)
+ return count
+
+def load_proposal_network(weights,config,device='cpu',normalization=None):
+ """Load checkpoint tensors, then apply its explicit inference normalization."""
+ checkpoint=torch.load(weights,map_location='cpu',weights_only=True)
+ selected=normalization or checkpoint.get('inference_config',{}).get('proposal_normalization','running')
+ if selected not in ['running','frame']:raise ValueError(selected)
+ model=ProposalNetwork(json.loads(Path(config).read_text())).to(torch.device(device))
+ model.load_state_dict(checkpoint['model'])
+ count=use_frame_statistics(model) if selected=='frame' else 0
+ model.eval()
+ return model,selected,count
+
 class NativeProposer:
- def __init__(self,weights,config,device='cuda',mode='tiles448'):
+ def __init__(self,weights,config,device='cuda',mode='tiles448',normalization=None):
   if mode not in ['tiles448','full_native']:raise ValueError(mode)
-  self.mode=mode;self.device=torch.device(device);self.model=ProposalNetwork(json.loads(Path(config).read_text())).to(self.device);self.model.load_state_dict(torch.load(weights,map_location='cpu',weights_only=True)['model']);self.model.eval()
+  self.mode=mode;self.device=torch.device(device)
+  self.model,self.normalization,self.frame_normalization_layers=load_proposal_network(weights,config,self.device,normalization)
+  if self.normalization=='frame' and mode!='full_native':raise ValueError('Frame normalization is validated only for a complete native image')
  @torch.inference_mode()
  def __call__(self,image,threshold=.5,include_geometry=False):
   if image.shape!=(1080,1440,3):raise ValueError('Validated proposal grid requires1440x1080 RGB; supply external centers for other image sizes')

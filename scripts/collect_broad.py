@@ -27,9 +27,10 @@ def read_exact(pipe,n,deadline):
   chunks.append(x);n-=len(x)
  return b''.join(chunks)
 def main():
- a=argparse.ArgumentParser();a.add_argument('--workspace',required=True);a.add_argument('--output',required=True);a.add_argument('--sdk-root',required=True);a.add_argument('--capture-source');a.add_argument('--cpp-standard',default='c++17');args=a.parse_args();W=Path(args.workspace);out=Path(args.output);out.mkdir(exist_ok=False,parents=True);p=plan();dump(out/'plan.json',p);(out/'episodes').mkdir();(out/'ipc').mkdir()
+ a=argparse.ArgumentParser();a.add_argument('--workspace',required=True);a.add_argument('--output',required=True);a.add_argument('--sdk-root',required=True);a.add_argument('--capture-source');a.add_argument('--labels-file',help='Optional new protected annotation path on another filesystem; never overwritten');a.add_argument('--cpp-standard',default='c++17');args=a.parse_args();W=Path(args.workspace);out=Path(args.output);out.mkdir(exist_ok=False,parents=True);p=plan();dump(out/'plan.json',p);(out/'episodes').mkdir();(out/'ipc').mkdir()
  source=Path(args.capture_source) if args.capture_source else Path(__file__).with_name('capture_broad.cpp');binary=out/'capture-broad';cmd=['c++','-std='+args.cpp_standard,'-O2','-pthread','-I'+str(Path(args.sdk_root)/'include'),str(source),str(Path(args.sdk_root)/'lib/libdaedalus_sim_sdk.a'),'-o',str(binary)];dump(out/'build-command.json',cmd);subprocess.run(cmd,check=True,timeout=90)
- env=os.environ.copy();env.update(TALOS_IPC_DIR=str(out/'ipc'),DAEDALUS_CORNER_LABELS_JSONL=str(out/'exact-corners.jsonl'))
+ label_path=Path(args.labels_file).resolve() if args.labels_file else out/'exact-corners.jsonl';assert not label_path.exists();label_path.parent.mkdir(parents=True,exist_ok=True);dump(out/'label-source.json',{'path':str(label_path),'protected_asset':True})
+ env=os.environ.copy();env.update(TALOS_IPC_DIR=str(out/'ipc'),DAEDALUS_CORNER_LABELS_JSONL=str(label_path))
  log=(out/'simulator.log').open('x');sim=subprocess.Popen([str(W/'tools/start-simulator-headless')],env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True);dump(out/'job.json',{'pid':os.getpid(),'simulator_pid':sim.pid,'started_unix':time.time(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()});started=time.monotonic();total=0
  try:
   deadline=time.monotonic()+50
@@ -45,12 +46,17 @@ def main():
     proc=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=clog,bufsize=0);dump(d/'execution.json',{'command':command,'pid':proc.pid})
     try:
      for i in range(spec['frames']):
-      if shutil.disk_usage(out).free<p['caps']['minimum_free_bytes']:raise RuntimeError('free space reserve reached')
+      if min(shutil.disk_usage(out).free,shutil.disk_usage(label_path.parent).free)<p['caps']['minimum_free_bytes']:raise RuntimeError('free space reserve reached')
       n=struct.unpack('<I',read_exact(proc.stdout,4,time.monotonic()+30))[0];assert 0<n<100000
       row=json.loads(read_exact(proc.stdout,n,time.monotonic()+10))
       if p.get('roll_fixed_zero'):
        from scipy.spatial.transform import Rotation
        rc=Rotation.from_quat(np.array(row['camera_quaternion_wxyz'])[[1,2,3,0]]).as_matrix();cfg=spec['config'];forward=np.array(cfg['camera_look_at_world_m'])-cfg['camera_position_world_m'];forward/=np.linalg.norm(forward);left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left);up=np.cross(forward,left);camera_roll=float(np.rad2deg(np.arctan2(rc[:,1]@up,rc[:,1]@left)));target_roll=float(Rotation.from_quat(np.array(row['target_quaternion_wxyz'])[[1,2,3,0]]).as_euler('ZYX',degrees=True)[-1]);assert abs(camera_roll)<.01 and abs(target_roll)<.01,(camera_roll,target_roll);row.update(actual_camera_roll_deg=camera_roll,actual_target_roll_deg=target_roll,requested_roll_zero_verified=True)
+      if p.get('target_level_fixed_zero'):
+       from scipy.spatial.transform import Rotation
+       yaw,pitch,roll=Rotation.from_quat(np.array(row['target_quaternion_wxyz'])[[1,2,3,0]]).as_euler('ZYX',degrees=True)
+       assert abs(pitch)<.01 and abs(roll)<.01,(pitch,roll)
+       row.update(actual_target_pitch_deg=float(pitch),actual_target_roll_deg=float(roll),requested_level_target_verified=True)
       raw=read_exact(proc.stdout,6220800,time.monotonic()+20);rgba=np.frombuffer(raw,np.uint8).reshape(1080,1440,4);assert (rgba[:,:,3]==255).all();bgr=rgba[:,:,:3][:,:,::-1].copy();name=f'{i:03d}.png';assert cv2.imwrite(str(d/name),bgr,[cv2.IMWRITE_PNG_COMPRESSION,2]);assert np.array_equal(cv2.imread(str(d/name)),bgr)
       row.update(image_path=str((d/name).relative_to(out)),split=spec['split'],light=spec['light'],mode=spec['mode'],configured_range_bin=spec['range_bin'],rgb_sha256=hashlib.sha256(rgba[:,:,:3].tobytes()).hexdigest());ledger.write(json.dumps(row)+'\n');ledger.flush();total+=(d/name).stat().st_size
       if total>p['caps']['maximum_new_bytes']:raise RuntimeError('native image byte budget')

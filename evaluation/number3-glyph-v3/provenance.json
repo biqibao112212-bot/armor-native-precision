@@ -1,0 +1,37 @@
+{
+  "recognition_source_commit": "8fcabea47ab4265581ef7441586f7c903d27dd7d",
+  "candidate_sha256": "942ea92547e6f9d9554a8c249c819c8fc5fe0d532b57ac1a9c7e1348f7a43c54",
+  "source_rgb_resized": false,
+  "collection_seed": 2027102212,
+  "frames": 1536,
+  "episodes": 384,
+  "actual_eligible_range_m": [
+    0.3729384333126326,
+    7.76573977670607
+  ],
+  "freeze_before_collection": true,
+  "new_model_selected_on_test": false,
+  "prediction_metrics_included": false,
+  "training_data": {
+    "frames": 11040,
+    "objects": 8539,
+    "glyph_max512_objects": 8535,
+    "optimizer_updates": 31989
+  },
+  "primary_targets": {
+    "corner_p95_px": 0.236,
+    "depth_p95_mm": 74.3,
+    "xy_p95_mm": 10.6,
+    "coverage": 0.9938800489596084
+  },
+  "files": {
+    "szu-provenance.json": "559fbcffc9dfd9c905f4739562b0e720a27f96e93b9262f9f796c0657e68460d",
+    "result.json": "8a3282b17eeb5606f3d211fe65de21d51ded5cb5ba2ab7f2e36a1d9377e9e641",
+    "error-vs-distance.png": "f5d6e5391e4915fe53ba1948b7a4f20bd6542bc30e959c344836eec0fe36d52f",
+    "records.jsonl": "c7cc8595ddacd0a9a827c0fdf3e702827c4e17f2fac2e63df70f5abb2c0ae3e5",
+    "error-vs-distance.svg": "e89a35b1213b3fbc84b06a33cc43701215fe36d38758566ddccedc07cd065aca",
+    "paired-primary.json": "243efbac879edb0c23d34e07b4386e7f2f1244dd5a619e33cd736fb63cba39a6",
+    "by-distance.csv": "30e1c83ea57b1abc09040849b780667e883be21be07db0329cc32b2a5ce31aba",
+    "prediction-seal.json": "e99c4a4ca69b784ff0df9ed4dff3d59721b41a0cc5b09f103d3986a4c731a90b"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "model_sha256": "1d9233eb74391347d20352cd6cbcb847976784be0ac609ebec2bee626ac1b303",
+  "native_tiles": 9,
+  "tile_size": 640,
+  "threshold": 0.5,
+  "frozen_scalar": 1.04221015588693
+}

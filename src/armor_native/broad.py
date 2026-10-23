@@ -84,6 +84,15 @@ def coarse_context_loss(logits,corners,native_size):
 
 def load_localizer(weights,device='cuda'):
  head=torch.load(weights,map_location='cpu',weights_only=False).get('head')
+ if head=='native_glyph_geometry':
+  from .glyph import GlyphLocalizer
+  return GlyphLocalizer(weights,device)
+ if head=='native_dense_plate':
+  from .plate import PlateLocalizer
+  return PlateLocalizer(weights,device)
+ if head=='native_quad_geometry':
+  from .quad import QuadLocalizer
+  return QuadLocalizer(weights,device)
  if head=='native_landmark_fusion':
   from .landmark import LandmarkNativeLocalizer
   return LandmarkNativeLocalizer(weights,device)
