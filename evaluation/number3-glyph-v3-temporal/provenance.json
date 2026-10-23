@@ -1,0 +1,38 @@
+{
+  "schema": "armor-native.temporal-evidence/1",
+  "collection_seed": 2026102211,
+  "sessions": 72,
+  "frames": 4320,
+  "recognition_frozen_before_collection": true,
+  "same_estimator_for_all_methods": true,
+  "prediction_sealed_before_truth_scoring": true,
+  "recognition_model_sha256": "942ea92547e6f9d9554a8c249c819c8fc5fe0d532b57ac1a9c7e1348f7a43c54",
+  "prediction_seal_sha256": "45438f3faabe0f104a24071ce20ac49e2e670baad41d9e1f230e3819365d7f15",
+  "full_results_uncompressed_sha256": "dea8cc8092b7a0c8a9322fbcd1f2b176c1d6c9434bedcbd4d06b333a290d6fe1",
+  "image_truth_exact_joins": 4320,
+  "session_image_interval_medians_ms": [
+    161.780319,
+    277.667909
+  ],
+  "max_session_dense_truth_gap_p95_ms": 7.0625315,
+  "truth_interpolation_gap_limit_ms": 25,
+  "physical_blur": false,
+  "pdf_generated": false,
+  "figure_visual_qa": "All four PNG figures inspected; no clipped axes, shared scales and complete tails verified.",
+  "files": {
+    "exact-current-state-diagnostic.json": "9143d6ade412ce17906b52a201bbe6b0af097824b0c306ba5ba29553346915f8",
+    "future-by-distance.csv": "e397e8d7308b1cc483296d14929cf8e153065d99451c23d6940f16d11d427f04",
+    "prediction-by-motion.svg": "b5eebce191d71690a452d04fa3ed884515a22af0ce732fd1bde5299547709d82",
+    "prediction-horizon-summary.svg": "1c390dd1192c2880fe5d0504e949f2ac5717a467b9638fa99ec49c0d8dad0b99",
+    "trajectory-100ms.svg": "40f59a57db4feee5fb2b0e2e99289fa3bb3790f5c76efd2c3a8ff077710dc28d",
+    "trajectory-100ms.png": "aae4d767fb903530a5cc5567dfccefd39659a3ac61799485aeb739c373fd2867",
+    "temporal-error-scatter.png": "ab3d663a112d7a3afde9cfd4b55f5603181ce3ee96d1bd2874e8f7ce85447e6e",
+    "prediction-horizon-summary.png": "a9686a939647b42cccc854157643557951808e53e7560b4d858713c7c9c70443",
+    "summary.json": "d199f35fe98fbb7749948da1e214ed833d90ded49a07bc27d249dca716736bf9",
+    "manifest.json": "53ea9eec7e5313be790488ccb58a387af7d65c5c6f832ff394dcb575ed207900",
+    "common-native-szu.json": "cdc1b5e455e0819ae0dfc1bfeb80caaa993f8b2aed56de9096cf8bebc11a4ffb",
+    "temporal-error-scatter.svg": "5a9c22c882826b22a60ee152618e809eac06e2dab995a27b20c183baf0820031",
+    "result.json.gz": "28393a5f497870645ad79f8d302f9ddb55a318f0fe65152b99ae9042dbc41be7",
+    "prediction-by-motion.png": "924bf244b79971e0a1d0e2d677534eb8beaf845005782f55897d524888955cf6"
+  }
+}

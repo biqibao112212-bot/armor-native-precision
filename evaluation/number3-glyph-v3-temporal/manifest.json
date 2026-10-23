@@ -1,0 +1,25 @@
+{
+  "complete": true,
+  "source_sha256": "4b0aef9e1fe530e8de2651d721dddb8bed360fedaa01fac9a0d3a9c83017a031",
+  "results_sha256": "dea8cc8092b7a0c8a9322fbcd1f2b176c1d6c9434bedcbd4d06b333a290d6fe1",
+  "selection": [
+    {
+      "session": "temporal-level-height40-b3-normal-linear",
+      "slot": 2,
+      "rule": "fixed normal-light 3.5m scenario; most covered native 100ms physical slot, never selected by error"
+    },
+    {
+      "session": "temporal-level-height40-b3-normal-spin",
+      "slot": 1,
+      "rule": "fixed normal-light 3.5m scenario; most covered native 100ms physical slot, never selected by error"
+    },
+    {
+      "session": "temporal-level-height40-b3-normal-combined",
+      "slot": 0,
+      "rule": "fixed normal-light 3.5m scenario; most covered native 100ms physical slot, never selected by error"
+    }
+  ],
+  "future_timing": "exposure; see original analysis for measured-delay diagnostic",
+  "no_pdf": true,
+  "no_model_selection": true
+}
