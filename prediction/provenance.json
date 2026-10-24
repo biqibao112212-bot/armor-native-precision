@@ -1,0 +1,8 @@
+{
+  "accepted_predictor_sha256": "42100c9d6310921317c7bde6ae93fc39823a02b5cfe98f9e4673255dc718aaca",
+  "observation_model": "unchanged published v0.4.0-rc1",
+  "evaluation_freeze_sha256": "4b67bfb54540158f6f83cd912ffcc11b73eaf358a1f9b117d13f1b80fb8b6088",
+  "private_source_snapshot_not_published": true,
+  "simulator_implementation_included": false,
+  "source_commit": "5863c9d159e352a7cadfaeac974c7fe796dbc10d"
+}

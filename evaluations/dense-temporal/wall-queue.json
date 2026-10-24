@@ -1,0 +1,121 @@
+{
+  "complete": true,
+  "source_frames": 1536,
+  "processed_frames": 1441,
+  "sessions": [
+    {
+      "session": "dense-confirm-2026102437-b3-normal-linear",
+      "source_frames": 512,
+      "processed_frames": 495,
+      "replaced_frames": 17,
+      "source_release_hz": 144.4524118508676,
+      "selected_exposure_hz": 139.64438286404817,
+      "measured_result_hz": 140.02384796041653,
+      "source_lateness_ms": {
+        "n": 512,
+        "mean": 0.0682352109375,
+        "median": 0.057654,
+        "p95": 0.12000059999999999,
+        "max": 1.267298
+      },
+      "observation_age_at_result_ms": {
+        "n": 495,
+        "mean": 9.236786701010102,
+        "median": 9.138093,
+        "p95": 12.675991599999998,
+        "max": 15.683565
+      },
+      "processing_ms": {
+        "n": 495,
+        "mean": 6.71935862020202,
+        "median": 6.6294059999999995,
+        "p95": 7.7347399999999995,
+        "max": 15.476851
+      },
+      "queue_wait_ms": {
+        "n": 495,
+        "mean": 2.4488378484848483,
+        "median": 2.227461,
+        "p95": 5.6703434999999995,
+        "max": 8.084738
+      }
+    },
+    {
+      "session": "dense-confirm-2026102437-b3-normal-spin",
+      "source_frames": 512,
+      "processed_frames": 462,
+      "replaced_frames": 50,
+      "source_release_hz": 146.93758420724092,
+      "selected_exposure_hz": 132.5650073699372,
+      "measured_result_hz": 132.4218893442834,
+      "source_lateness_ms": {
+        "n": 512,
+        "mean": 0.077730466796875,
+        "median": 0.0576175,
+        "p95": 0.18852424999999995,
+        "max": 1.4495099999999999
+      },
+      "observation_age_at_result_ms": {
+        "n": 462,
+        "mean": 10.09724383982684,
+        "median": 9.9987785,
+        "p95": 14.099297049999997,
+        "max": 17.356116999999998
+      },
+      "processing_ms": {
+        "n": 462,
+        "mean": 7.172470627705627,
+        "median": 6.9596785,
+        "p95": 8.601303399999999,
+        "max": 10.340893999999999
+      },
+      "queue_wait_ms": {
+        "n": 462,
+        "mean": 2.845422835497835,
+        "median": 2.786988,
+        "p95": 6.653097099999998,
+        "max": 9.461507
+      }
+    },
+    {
+      "session": "dense-confirm-2026102437-b3-normal-combined",
+      "source_frames": 512,
+      "processed_frames": 484,
+      "replaced_frames": 28,
+      "source_release_hz": 143.79060197957747,
+      "selected_exposure_hz": 135.90926307259116,
+      "measured_result_hz": 132.8333792590762,
+      "source_lateness_ms": {
+        "n": 512,
+        "mean": 0.07151389843749999,
+        "median": 0.0577005,
+        "p95": 0.1597163,
+        "max": 0.364206
+      },
+      "observation_age_at_result_ms": {
+        "n": 484,
+        "mean": 9.6113790661157,
+        "median": 9.299415499999999,
+        "p95": 13.431734349999997,
+        "max": 91.73892
+      },
+      "processing_ms": {
+        "n": 484,
+        "mean": 7.012937725206611,
+        "median": 6.913702,
+        "p95": 7.63171005,
+        "max": 91.63832099999999
+      },
+      "queue_wait_ms": {
+        "n": 484,
+        "mean": 2.526663923553719,
+        "median": 2.380946,
+        "p95": 6.185216649999998,
+        "max": 9.047535
+      }
+    }
+  ],
+  "physical_camera_benchmark": false,
+  "NX_validated": false,
+  "seconds": 76.9407294690609
+}

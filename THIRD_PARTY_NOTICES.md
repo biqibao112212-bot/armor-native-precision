@@ -18,8 +18,12 @@
 
 PyTorch、NumPy、OpenCV、ONNX/ONNX Runtime等通过环境安装，各依赖按自身许可使用，未将库二进制复制入仓库。IPPE通过OpenCV调用，来源见METHODS.md。
 
-结果中的11维EKF来自源仓库维护的TongjiSuperPower/sp_vision_25适配（MIT），本模型仓库没有重新分发其C++源码。模拟器Release/SDK与SZU0526基线也未在这里重新分发；结果文件中的路径和哈希只是证据定位。
+结果中的11维EKF来自源仓库维护的TongjiSuperPower/sp_vision_25适配（MIT），v0.4.1在prediction/中附上该预测器的最小可构建源码快照。模拟器Release/SDK与SZU0526基线也未在这里重新分发；结果文件中的路径和哈希只是证据定位。
 
 ## SciPy TRF 算法移植
 
 可选原生几何后端将 SciPy 1.14.1 的有界 trust-region reflective、soft-L1 鲁棒最小二乘流程移植为 C++/Eigen，并使用本项目平面姿态的解析雅可比。相关代码为 src/armor_native/native/glyph_trf.cpp；SciPy BSD-3-Clause 版权与许可全文保留在同目录 SCIPY_LICENSE.txt。默认后端仍为 SciPy；Eigen 由使用者在目标机器安装，不随仓库分发二进制。
+
+## 预测器快照 v0.4.1
+
+TongjiSuperPower/sp_vision_25，commit bd9f5e798fa3c6dd3b483ae6627796afb41c608d，MIT。原始许可保留在prediction/third_party/tongji/LICENSE；2026-10-24本地修改包含ResearchTarget适配、原生观测R、坐标/PnP关联、标准输入输出与Python未来位置接口。来源和修改见prediction/NOTICE.md。没有复制模拟器、SDK或私有研究历史。
